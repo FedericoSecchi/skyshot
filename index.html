@@ -1,23 +1,41 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SkyShot Lab — Drone & Outdoor Visuals</title>
-  <meta name="description" content="Aerial and watersports visuals from Lake Garda and beyond. Drone, photo, video, branding." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="assets/favicon.png">
-  <meta property="og:title" content="SkyShot Lab — Drone & Outdoor Visuals">
-  <meta property="og:description" content="Aerial & watersports visuals. Drone • Photo • Edit • Branding">
-  <meta property="og:image" content="assets/og-cover.jpg">
-  <meta property="og:type" content="website">
-</head>
+    <head>
+        <!-- 1. Lo básico -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SkyShot Lab — Drone & Outdoor Visuals</title>
+        <meta name="description" content="Aerial & watersports visuals from Lake Garda. Drone • Photo • Edit • Branding." />
+        <link rel="canonical" href="https://federicosecchi.github.io/skyshot/" />
+      
+        <!-- 2. CSS (un único archivo, bloquea poco y es simple) -->
+        <link rel="stylesheet" href="styles.css" />
+      
+        <!-- 3. Iconos de la pestaña -->
+        <link rel="icon" href="/Skyshot logo/skyshot_Mesa de trabajo 1 copia 3.png" type="image/svg+xml" />
+        <link rel="icon" href="/Skyshot logo/skyshot_Mesa de trabajo 1 copia 4.png" sizes="32x32" />
+        <meta name="theme-color" content="#0b0d10" />
+      
+        <!-- 4. Social sharing (Open Graph + Twitter) | usa URL ABSOLUTA -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://federicosecchi.github.io/skyshot/" />
+        <meta property="og:title" content="SkyShot Lab — Drone & Outdoor Visuals" />
+        <meta property="og:description" content="Aerial & watersports visuals from Lake Garda. Drone • Photo • Edit • Branding." />
+        <meta property="og:image" content="/Fotos/Sailboat Sunset.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="SkyShot Lab — Drone & Outdoor Visuals" />
+        <meta name="twitter:description" content="Aerial & watersports visuals from Lake Garda. Drone • Photo • Edit • Branding." />
+        <meta name="twitter:image" content="https://federicosecchi.github.io/skyshot/assets/img/og-cover.jpg" />
+      
+        <!-- 5. Performance opcional: precarga de la imagen del hero -->
+        <link rel="preload" as="image" href="/Fotos/Sailboat Sunset.jpg" />
+      </head>
 <body>
 
   <header class="nav">
-    <a class="logo" href="#top">SKYSHOT<span>LAB</span></a>
+    <a class="logo" href="#top">
+      <img src="/Skyshot logo/skyshot_Mesa de trabajo 1 copia 3.png" alt="SkyShot Lab logo">
+    </a>
     <nav>
       <a href="#services">Services</a>
       <a href="#work">Work</a>
@@ -38,7 +56,17 @@
         </div>
       </div>
       <!-- usa una foto/video tuyo (poster o <video muted loop autoplay playsinline>) -->
-      <div class="hero__media" role="img" aria-label="Aerial shot over Lake Garda"></div>
+      <div class="hero__media">
+        <picture>
+          <source srcset="/Fotos/Sailboat Sunset.jpg" type="image/jpeg">
+          <img src="/Fotos/Sailboat Sunset.jpg"
+               alt="Aerial drone shot over Lake Garda"
+               fetchpriority="high"
+               decoding="async"
+               width="1600"
+               height="900">
+        </picture>
+      </div>
     </section>
 
     <!-- SERVICES -->
@@ -69,29 +97,30 @@
       <h2 class="section__title">Selected Work</h2>
       <div class="grid gallery">
         <!-- Reemplaza los src por tus imágenes optimizadas ~1600px ancho -->
-        <img src="assets/work-01.jpg" alt="Wingfoil jump over Lake Garda">
-        <img src="assets/work-02.jpg" alt="Sailing team drone shot">
-        <img src="assets/work-03.jpg" alt="Trail switchbacks on mountain">
-        <img src="assets/work-04.jpg" alt="Golden hour kayak">
-        <img src="assets/work-05.jpg" alt="Regatta from above">
-        <img src="assets/work-06.jpg" alt="Vineyards by the lake">
+        <img src="/Fotos/Wingfoil jump over Lake Garda.jpg" alt="Wingfoil jump over Lake Garda">
+        <img src="/Fotos/29er Sailing.jpg" alt="Sailing 29er drone shot">
+        <img src="/Fotos/Mountain with Snow.jpg" alt= "Mountain with Snow">
+        <img src="/Fotos/Golden hour kayak.jpg" alt="Golden hour kayak">
+        <img src="/Fotos/Cold River in lake.jpg" alt="Cold River in lake">
+        <img src="/Fotos/Vineyards by the lake.jpg" alt="Vineyards by the lake">
       </div>
     </section>
-
     <!-- ABOUT -->
     <section id="about" class="section about">
-      <h2 class="section__title">Team</h2>
-      <div class="about__grid">
-        <div>
-          <h3>Fede</h3>
-          <p>Drone pilot, technical filming & editing. Focus on clean action and smooth motion.</p>
+        <h2 class="section__title">Team</h2>
+        <div class="about__grid">
+          <div class="about__member">
+            <img src="/Fotos/Fede profile.JPG" alt="Fede - Drone pilot" class="about__img" loading="lazy">
+            <h3>Fede</h3>
+            <p>Drone pilot, technical filming & editing. Focus on clean action and smooth motion.</p>
+          </div>
+          <div class="about__member">
+            <img src="/Fotos/Coti profile.jpeg" alt="Coti - Branding & visuals" class="about__img" loading="lazy">
+            <h3>Coti</h3>
+            <p>Branding, aesthetic direction & animations. Cohesive look for reels and campaigns.</p>
+          </div>
         </div>
-        <div>
-          <h3>Coti</h3>
-          <p>Branding, aesthetic direction & animations. Cohesive look for reels and campaigns.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
     <!-- CONTACT -->
     <section id="contact" class="section contact">
