@@ -58,13 +58,20 @@
       <!-- usa una foto/video tuyo (poster o <video muted loop autoplay playsinline>) -->
       <div class="hero__media">
         <picture>
-          <source srcset="/Fotos/Sailboat Sunset.jpg" type="image/jpeg">
-          <img src="/Fotos/Sailboat Sunset.jpg"
-               alt="Sailboat at golden hour, aerial view with mountain backdrop"
-               fetchpriority="high"
-               decoding="async"
-               width="1600"
-               height="900">
+          <!-- WebP sources (use these files if you add them under assets/img/) -->
+          <source srcset="/fotos/sailboat sunset.webp" type="image/webp" media="(min-width: 900px)">
+          <source srcset="/fotos/sailboat sunset.webp" type="image/webp">
+          <!-- JPEG sources (use these files if you add them under assets/img/) -->
+          <source srcset="/fotos/sailboat sunset.jpg" type="image/jpeg" media="(min-width: 900px)">
+          <source srcset="/fotos/sailboat sunset.jpg" type="image/jpeg">
+          <!-- Fallback to your current image (keeps the site working today) -->
+          <img
+            src="/fotos/sailboat sunset.jpg"
+            alt="Sailboat at golden hour, aerial view with mountain backdrop"
+            fetchpriority="high"
+            decoding="async"
+            width="1600"
+            height="900">
         </picture>
       </div>
     </section>
