@@ -163,3 +163,49 @@
                    rgba(0,0,0,0) 100%);
     }
   }
+
+/* ===========================
+   Services – minimalist icon cards (scoped overrides)
+   =========================== */
+#services .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+#services .card {
+  /* reset overlay-style defaults */
+  position: static;
+  overflow: visible;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 8px;
+  padding: 18px;
+  background: var(--card);
+  border: 1px solid #1f2632;
+  border-radius: 16px;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+#services .card::after { content: none; }
+#services .card img { position: static; width: auto; height: auto; object-fit: contain; }
+
+#services .card .card__icon { color: var(--brand); line-height: 0; margin-bottom: 6px; }
+#services .card h3 { margin: 4px 0 2px; letter-spacing: .4px; font-weight: 800; }
+#services .card p { color: var(--muted); margin: 0; }
+
+#services .card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.25); border-color: rgba(0,229,255,.4); }
+
+/* Motion-safe */
+@media (prefers-reduced-motion: reduce){
+  #services .card { transition: none; }
+  #services .card:hover { transform: none; box-shadow: none; }
+}
+
+/* Responsive tweaks for Services */
+@media (max-width: 980px){
+  #services .cards { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px){
+  #services .cards { grid-template-columns: 1fr; }
+  #services .card { min-height: 200px; }
+}
