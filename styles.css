@@ -209,3 +209,49 @@
   #services .cards { grid-template-columns: 1fr; }
   #services .card { min-height: 200px; }
 }
+
+/* Lightbox overlay (matches #lightbox markup) */
+.lightbox{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.9);
+  display:flex; align-items:center; justify-content:center;
+  z-index:100; padding:24px;
+}
+.lightbox.hidden{ display:none; }
+.lightbox img{
+  max-width:min(92vw,1100px); max-height:86vh;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+
+/* Controls */
+.lightbox__close,
+.lightbox__prev,
+.lightbox__next{
+  position:absolute; border:0; background:rgba(255,255,255,.1);
+  color:#fff; cursor:pointer; line-height:1;
+  padding:10px 14px; border-radius:10px; backdrop-filter: blur(4px);
+  transition:background .2s ease, transform .2s ease;
+}
+.lightbox__close{ top:16px; right:16px; font-size:26px; }
+.lightbox__prev{ left:16px; top:50%; transform:translateY(-50%); font-size:22px; }
+.lightbox__next{ right:16px; top:50%; transform:translateY(-50%); font-size:22px; }
+.lightbox__prev:hover, .lightbox__next:hover, .lightbox__close:hover{
+  background:rgba(255,255,255,.18); transform:translateY(-50%) scale(1.05);
+}
+.lightbox__close:hover{ transform:scale(1.05); } /* close no necesita translateY */
+
+.lightbox__close:focus-visible,
+.lightbox__prev:focus-visible,
+.lightbox__next:focus-visible{
+  outline:2px solid var(--brand); outline-offset:2px;
+}
+
+/* Respect motion settings */
+@media (prefers-reduced-motion: reduce){
+  .lightbox__prev:hover, .lightbox__next:hover, .lightbox__close:hover{ transform:none; }
+}
+
+/* Utility */
+[hidden]{ display:none !important; }
+#work .gallery img{ cursor: zoom-in; }
