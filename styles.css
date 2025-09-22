@@ -13,7 +13,12 @@
   a{color:var(--text);text-decoration:none}
   .section{padding:72px 20px;max-width:1200px;margin:0 auto}
   .section__title{letter-spacing:.5px;font-size:44px;margin:0 0 28px;font-weight:800}
-  
+  .section {
+    scroll-margin-top: 140px; /* o el valor que quieras según altura real del nav */
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   /* Cursor (opcional) */
   body{ cursor:url("assets/cursor.svg") 12 12, auto; } /* quítalo si no usas el archivo */
   
