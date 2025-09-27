@@ -246,21 +246,24 @@ html {
   line-height: 1.5;
 }
 
-/* Gallery */
+/* Gallery optimizada para muchas fotos */
 .gallery {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .gallery figure {
   margin: 0;
   border-radius: 14px;
   overflow: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  break-inside: avoid; /* Evita que las imágenes se corten entre columnas */
 }
 
 .gallery figure:hover {
   transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 229, 255, 0.2);
 }
 
 .gallery img {
@@ -275,10 +278,54 @@ html {
   transform: scale(1.05);
 }
 
+/* Mejor rendimiento para muchas imágenes */
+.gallery {
+  transform: translateZ(0); /* Acelera la renderización */
+}
+
+/* Loading state para imágenes */
+.gallery img {
+  background: linear-gradient(90deg, #1a1f29 25%, #232b38 50%, #1a1f29 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.gallery img.loaded {
+  animation: none;
+  background: none;
+}
+
+/* Botón See More más prominente */
 .see-more-container {
   display: flex;
   justify-content: center;
-  margin-top: 32px;
+  margin-top: 40px;
+}
+
+#seeMoreBtn {
+  padding: 15px 30px;
+  font-size: 18px;
+  background: var(--brand);
+  color: #001016;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 700;
+}
+
+#seeMoreBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 229, 255, 0.4);
+}
+
+#seeMoreBtn:active {
+  transform: translateY(-1px);
 }
 
 /* About */
