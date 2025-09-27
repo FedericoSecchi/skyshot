@@ -1,15 +1,16 @@
 // SkyShot Lab – main JS (simple & robust)
 document.addEventListener('DOMContentLoaded', () => {
   // ===========================
-  // WORK – Collapsible grid
+  // WORK – Collapsible grid (6 FOTOS INICIALES)
   // ===========================
   const seeMoreBtn = document.getElementById('seeMoreBtn');
   const gallery = document.querySelector('#work .gallery');
   
   if (seeMoreBtn && gallery) {
     const allImages = Array.from(gallery.querySelectorAll('img'));
-    const initialVisibleCount = 4;
+    const initialVisibleCount = 6; // Cambiado de 4 a 6
     
+    // Ocultar imágenes adicionales al inicio (a partir de la 7ma)
     allImages.forEach((img, index) => {
       if (index >= initialVisibleCount) {
         img.closest('figure').style.display = 'none';
@@ -23,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const isExpanded = seeMoreBtn.getAttribute('aria-expanded') === 'true';
       
       if (isExpanded) {
+        // Ocultar imágenes adicionales (mostrar solo las primeras 6)
         allImages.forEach((img, index) => {
           if (index >= initialVisibleCount) {
             img.closest('figure').style.display = 'none';
@@ -30,11 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         seeMoreBtn.setAttribute('aria-expanded', 'false');
         seeMoreBtn.textContent = 'See more';
+        
+        // Scroll suave hacia la sección work
         document.getElementById('work')?.scrollIntoView({ 
           behavior: 'smooth', 
           block: 'start' 
         });
       } else {
+        // Mostrar todas las imágenes
         allImages.forEach(img => {
           img.closest('figure').style.display = 'block';
         });
@@ -45,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===========================
-  // LIGHTBOX – open/close/nav
+  // LIGHTBOX – open/close/nav (RESTA DEL CÓDIGO IGUAL)
   // ===========================
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = lightbox?.querySelector('.lightbox__img');
@@ -176,17 +181,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===========================
-  // Navbar background on scroll - CON MÁS BLUR
+  // Navbar background on scroll
   // ===========================
   const navbar = document.querySelector('.nav');
   
   function updateNavbarBackground() {
     if (window.scrollY > 50) {
       navbar.style.background = 'rgba(14, 17, 23, 0.5)';
-      navbar.style.backdropFilter = 'blur(20px)'; // Aumentado de 8px a 20px
+      navbar.style.backdropFilter = 'blur(20px)';
     } else {
       navbar.style.background = 'rgba(14, 17, 23, 0.0)';
-      navbar.style.backdropFilter = 'blur(0px)'; // Valor original
+      navbar.style.backdropFilter = 'blur(8px)';
     }
   }
   
