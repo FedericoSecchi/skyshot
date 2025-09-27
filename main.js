@@ -1,26 +1,45 @@
 // SkyShot Lab – main JS (simple & robust)
-// - Collapsible “See more work”
-// - Lightbox with prev/next + keyboard
-// Works whether the script is loaded in <head> (defer) or before </body>
-
 document.addEventListener('DOMContentLoaded', () => {
   // ===========================
   // WORK – Collapsible grid
   // ===========================
-  const btn = document.getElementById('work-toggle');
-  const more = document.getElementById('work-more');
-  if (btn && more) {
-    // start collapsed (CSS controls visibility; we ensure ARIA/label)
-    more.classList.remove('is-open');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.textContent = 'See more work ▾';
+  const seeMoreBtn = document.getElementById('seeMoreBtn');
+  const gallery = document.querySelector('#work .gallery');
+  
+  if (seeMoreBtn && gallery) {
+    const allImages = Array.from(gallery.querySelectorAll('img'));
+    const initialVisibleCount = 4;
+    
+    allImages.forEach((img, index) => {
+      if (index >= initialVisibleCount) {
+        img.closest('figure').style.display = 'none';
+      }
+    });
+    
+    seeMoreBtn.setAttribute('aria-expanded', 'false');
+    seeMoreBtn.textContent = 'See more';
 
-    btn.addEventListener('click', () => {
-      const open = more.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.textContent = open ? 'Show less ▴' : 'See more work ▾';
-      if (!open) {
-        document.getElementById('work')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    seeMoreBtn.addEventListener('click', () => {
+      const isExpanded = seeMoreBtn.getAttribute('aria-expanded') === 'true';
+      
+      if (isExpanded) {
+        allImages.forEach((img, index) => {
+          if (index >= initialVisibleCount) {
+            img.closest('figure').style.display = 'none';
+          }
+        });
+        seeMoreBtn.setAttribute('aria-expanded', 'false');
+        seeMoreBtn.textContent = 'See more';
+        document.getElementById('work')?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        allImages.forEach(img => {
+          img.closest('figure').style.display = 'block';
+        });
+        seeMoreBtn.setAttribute('aria-expanded', 'true');
+        seeMoreBtn.textContent = 'Show less';
       }
     });
   }
@@ -28,79 +47,171 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===========================
   // LIGHTBOX – open/close/nav
   // ===========================
-  const lb = document.getElementById('lightbox');
-  const lbImg = lb?.querySelector('img');
-  const btnClose = lb?.querySelector('.lightbox__close');
-  const btnPrev = lb?.querySelector('.lightbox__prev');
-  const btnNext = lb?.querySelector('.lightbox__next');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = lightbox?.querySelector('.lightbox__img');
+  const lightboxClose = lightbox?.querySelector('.lightbox__close');
+  const lightboxPrev = lightbox?.querySelector('.lightbox__prev');
+  const lightboxNext = lightbox?.querySelector('.lightbox__next');
 
-  let images = [];
-  let current = -1;
+  let lightboxImages = [];
+  let currentImageIndex = -1;
 
-  function collectImages() {
-    images = Array.from(document.querySelectorAll('#work .gallery img'));
+  function collectGalleryImages() {
+    lightboxImages = Array.from(document.querySelectorAll('#work .gallery img'));
   }
 
-  function show(index) {
-    if (!lb || !lbImg) return;
-    if (images.length === 0) collectImages();
-    if (images.length === 0) return;
-    // wrap-around
-    if (index < 0) index = images.length - 1;
-    if (index >= images.length) index = 0;
-    current = index;
-
-    const img = images[current];
+  function showLightboxImage(index) {
+    if (!lightbox || !lightboxImg) return;
+    
+    if (lightboxImages.length === 0) collectGalleryImages();
+    if (lightboxImages.length === 0) return;
+    
+    if (index < 0) index = lightboxImages.length - 1;
+    if (index >= lightboxImages.length) index = 0;
+    
+    currentImageIndex = index;
+    const img = lightboxImages[currentImageIndex];
     const src = img.currentSrc || img.src;
-    lbImg.src = src;
-    lbImg.alt = img.alt || '';
-    lb.classList.remove('hidden');
-    lb.setAttribute('aria-hidden', 'false');
+    
+    lightboxImg.src = src;
+    lightboxImg.alt = img.alt || 'Gallery image preview';
+    
+    lightbox.classList.remove('hidden');
+    setTimeout(() => {
+      lightbox.classList.add('active');
+    }, 10);
+    
+    lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    lightboxClose.focus();
   }
 
-  function openFromImage(img) {
-    collectImages();
-    current = images.indexOf(img);
-    if (current < 0) current = 0;
-    show(current);
+  function openLightboxFromImage(clickedImg) {
+    collectGalleryImages();
+    currentImageIndex = lightboxImages.indexOf(clickedImg);
+    if (currentImageIndex < 0) currentImageIndex = 0;
+    showLightboxImage(currentImageIndex);
   }
 
-  function close() {
-    if (!lb || !lbImg) return;
-    lb.classList.add('hidden');
-    lb.setAttribute('aria-hidden', 'true');
-    lbImg.removeAttribute('src');
-    lbImg.removeAttribute('alt');
-    document.body.style.overflow = '';
+  function closeLightbox() {
+    if (!lightbox || !lightboxImg) return;
+    
+    lightbox.classList.remove('active');
+    setTimeout(() => {
+      lightbox.classList.add('hidden');
+      lightboxImg.removeAttribute('src');
+      document.body.style.overflow = '';
+    }, 300);
+    
+    lightbox.setAttribute('aria-hidden', 'true');
   }
 
-  function next() { show(current + 1); }
-  function prev() { show(current - 1); }
+  function nextImage() { showLightboxImage(currentImageIndex + 1); }
+  function prevImage() { showLightboxImage(currentImageIndex - 1); }
 
-  // Delegated click: open lightbox when any gallery image is clicked
   document.addEventListener('click', (e) => {
-    const img = e.target.closest('#work .gallery img');
-    if (img) {
+    const clickedImg = e.target.closest('#work .gallery img');
+    if (clickedImg) {
       e.preventDefault();
-      openFromImage(img);
+      openLightboxFromImage(clickedImg);
     }
   });
 
-  // Controls
-  btnClose?.addEventListener('click', close);
-  btnNext?.addEventListener('click', next);
-  btnPrev?.addEventListener('click', prev);
+  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+  if (lightboxNext) lightboxNext.addEventListener('click', nextImage);
+  if (lightboxPrev) lightboxPrev.addEventListener('click', prevImage);
 
-  // Click on overlay closes (only if click target is the overlay container)
-  lb?.addEventListener('click', (e) => { if (e.target === lb) close(); });
+  if (lightbox) {
+    lightbox.addEventListener('click', (e) => { 
+      if (e.target === lightbox) closeLightbox(); 
+    });
+  }
 
-  // Keyboard navigation when lightbox is open
   document.addEventListener('keydown', (e) => {
-    if (lb && !lb.classList.contains('hidden')) {
-      if (e.key === 'Escape') close();
-      if (e.key === 'ArrowRight') next();
-      if (e.key === 'ArrowLeft') prev();
+    if (lightbox && !lightbox.classList.contains('hidden')) {
+      switch(e.key) {
+        case 'Escape': closeLightbox(); break;
+        case 'ArrowRight': nextImage(); break;
+        case 'ArrowLeft': prevImage(); break;
+        case 'Tab':
+          const focusableElements = lightbox.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+          break;
+      }
     }
   });
+
+  // ===========================
+  // Smooth scrolling for navigation links
+  // ===========================
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        const headerHeight = document.querySelector('.nav').offsetHeight;
+        const targetPosition = targetElement.offsetTop - headerHeight - 20;
+        
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  // ===========================
+  // Navbar background on scroll - CON MÁS BLUR
+  // ===========================
+  const navbar = document.querySelector('.nav');
+  
+  function updateNavbarBackground() {
+    if (window.scrollY > 50) {
+      navbar.style.background = 'rgba(14, 17, 23, 0.5)';
+      navbar.style.backdropFilter = 'blur(20px)'; // Aumentado de 8px a 20px
+    } else {
+      navbar.style.background = 'rgba(14, 17, 23, 0.0)';
+      navbar.style.backdropFilter = 'blur(0px)'; // Valor original
+    }
+  }
+  
+  window.addEventListener('scroll', updateNavbarBackground);
+  updateNavbarBackground();
+
+  // ===========================
+  // Image loading optimization
+  // ===========================
+  const images = document.querySelectorAll('img[loading="lazy"]');
+  
+  if ('IntersectionObserver' in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.src = img.dataset.src || img.src;
+          img.classList.add('loaded');
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+  }
+
+  console.log('SkyShot Lab JS loaded successfully!');
 });
