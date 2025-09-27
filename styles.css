@@ -69,7 +69,6 @@ html {
   padding: 2px 20px;
   background: rgba(14, 17, 23, 0.95);
   backdrop-filter: blur(8px);
-  /* border-bottom: 1px solid #1f2632; ← ESTA LÍNEA HA SIDO ELIMINADA */
   min-height: 100px;
 }
 
@@ -246,24 +245,21 @@ html {
   line-height: 1.5;
 }
 
-/* Gallery optimizada para muchas fotos */
+/* Gallery */
 .gallery {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
 }
 
 .gallery figure {
   margin: 0;
   border-radius: 14px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
   cursor: pointer;
-  break-inside: avoid; /* Evita que las imágenes se corten entre columnas */
 }
 
 .gallery figure:hover {
   transform: scale(1.02);
-  box-shadow: 0 10px 25px rgba(0, 229, 255, 0.2);
 }
 
 .gallery img {
@@ -278,68 +274,29 @@ html {
   transform: scale(1.05);
 }
 
-/* Mejor rendimiento para muchas imágenes */
-.gallery {
-  transform: translateZ(0); /* Acelera la renderización */
-}
-
-/* Loading state para imágenes */
-.gallery img {
-  background: linear-gradient(90deg, #1a1f29 25%, #232b38 50%, #1a1f29 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
-}
-
-@keyframes loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.gallery img.loaded {
-  animation: none;
-  background: none;
-}
-
-/* Botón See More más prominente */
 .see-more-container {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
-#seeMoreBtn {
-  padding: 15px 30px;
-  font-size: 18px;
-  background: var(--brand);
-  color: #001016;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 700;
-}
-
-#seeMoreBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 229, 255, 0.4);
-}
-
-#seeMoreBtn:active {
-  transform: translateY(-1px);
-}
-
-/* About */
+/* About/Team Section - CORREGIDO */
 .about__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 48px;
+  gap: 60px;
   justify-items: center;
   align-items: start;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .about__member {
   text-align: center;
   max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .about__img {
@@ -353,14 +310,17 @@ html {
 
 .about__member h3 {
   font-size: 24px;
-  margin: 0 0 12px;
+  margin: 0 0 16px;
   font-weight: 700;
+  color: var(--text);
 }
 
 .about__member p {
   color: var(--muted);
   line-height: 1.6;
   margin: 0;
+  text-align: center;
+  max-width: 280px;
 }
 
 /* Contact */
@@ -542,6 +502,13 @@ html {
   .logo img {
     max-height: 50px;
   }
+  
+  /* Team responsive */
+  .about__grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 400px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -572,6 +539,16 @@ html {
   
   .logo img {
     max-height: 100px;
+  }
+  
+  /* Team mobile */
+  .about__img {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .about__member h3 {
+    font-size: 20px;
   }
 }
 
