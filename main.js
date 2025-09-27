@@ -1,53 +1,66 @@
 // SkyShot Lab – main JS (simple & robust)
 document.addEventListener('DOMContentLoaded', () => {
   // ===========================
-  // WORK – Collapsible grid (6 FOTOS INICIALES)
-  // ===========================
-  const seeMoreBtn = document.getElementById('seeMoreBtn');
-  const gallery = document.querySelector('#work .gallery');
-  
-  if (seeMoreBtn && gallery) {
-    const allImages = Array.from(gallery.querySelectorAll('img'));
-    const initialVisibleCount = 6; // Cambiado de 4 a 6
-    
-    // Ocultar imágenes adicionales al inicio (a partir de la 7ma)
-    allImages.forEach((img, index) => {
-      if (index >= initialVisibleCount) {
-        img.closest('figure').style.display = 'none';
-      }
-    });
-    
-    seeMoreBtn.setAttribute('aria-expanded', 'false');
-    seeMoreBtn.textContent = 'See more';
+// WORK – Optimizado para muchas fotos
+// ===========================
+const seeMoreBtn = document.getElementById('seeMoreBtn');
+const gallery = document.querySelector('#work .gallery');
 
-    seeMoreBtn.addEventListener('click', () => {
-      const isExpanded = seeMoreBtn.getAttribute('aria-expanded') === 'true';
+if (seeMoreBtn && gallery) {
+  const allFigures = Array.from(gallery.querySelectorAll('figure'));
+  const initialVisibleCount = 6;
+  let isExpanded = false;
+
+  // Ocultar figuras adicionales al inicio
+  allFigures.forEach((figure, index) => {
+    if (index >= initialVisibleCount) {
+      figure.style.display = 'none';
+    }
+  });
+
+  seeMoreBtn.setAttribute('aria-expanded', 'false');
+  seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
+
+  seeMoreBtn.addEventListener('click', () => {
+    isExpanded = !isExpanded;
+    
+    if (isExpanded) {
+      // Mostrar todas las fotos con animación suave
+      allFigures.forEach((figure, index) => {
+        setTimeout(() => {
+          figure.style.display = 'block';
+          figure.style.opacity = '0';
+          figure.style.transform = 'translateY(20px)';
+          
+          setTimeout(() => {
+            figure.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            figure.style.opacity = '1';
+            figure.style.transform = 'translateY(0)';
+          }, 50);
+        }, index * 50); // Efecto cascada
+      });
       
-      if (isExpanded) {
-        // Ocultar imágenes adicionales (mostrar solo las primeras 6)
-        allImages.forEach((img, index) => {
-          if (index >= initialVisibleCount) {
-            img.closest('figure').style.display = 'none';
-          }
-        });
-        seeMoreBtn.setAttribute('aria-expanded', 'false');
-        seeMoreBtn.textContent = 'See more';
-        
-        // Scroll suave hacia la sección work
-        document.getElementById('work')?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      } else {
-        // Mostrar todas las imágenes
-        allImages.forEach(img => {
-          img.closest('figure').style.display = 'block';
-        });
-        seeMoreBtn.setAttribute('aria-expanded', 'true');
-        seeMoreBtn.textContent = 'Show less';
-      }
-    });
-  }
+      seeMoreBtn.setAttribute('aria-expanded', 'true');
+      seeMoreBtn.textContent = 'Show less';
+    } else {
+      // Ocultar fotos adicionales
+      allFigures.forEach((figure, index) => {
+        if (index >= initialVisibleCount) {
+          figure.style.display = 'none';
+        }
+      });
+      
+      seeMoreBtn.setAttribute('aria-expanded', 'false');
+      seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
+      
+      // Scroll suave hacia la sección work
+      document.getElementById('work')?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    }
+  });
+}
 
   // ===========================
   // LIGHTBOX – open/close/nav (RESTA DEL CÓDIGO IGUAL)
