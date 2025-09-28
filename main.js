@@ -1,69 +1,69 @@
 // SkyShot Lab – main JS (simple & robust)
 document.addEventListener('DOMContentLoaded', () => {
   // ===========================
-// WORK – Optimizado para muchas fotos
-// ===========================
-const seeMoreBtn = document.getElementById('seeMoreBtn');
-const gallery = document.querySelector('#work .gallery');
+  // WORK – Optimizado para muchas fotos
+  // ===========================
+  const seeMoreBtn = document.getElementById('seeMoreBtn');
+  const gallery = document.querySelector('#work .gallery');
 
-if (seeMoreBtn && gallery) {
-  const allFigures = Array.from(gallery.querySelectorAll('figure'));
-  const initialVisibleCount = 6;
-  let isExpanded = false;
+  if (seeMoreBtn && gallery) {
+    const allFigures = Array.from(gallery.querySelectorAll('figure'));
+    const initialVisibleCount = 6;
+    let isExpanded = false;
 
-  // Ocultar figuras adicionales al inicio
-  allFigures.forEach((figure, index) => {
-    if (index >= initialVisibleCount) {
-      figure.style.display = 'none';
-    }
-  });
+    // Ocultar figuras adicionales al inicio
+    allFigures.forEach((figure, index) => {
+      if (index >= initialVisibleCount) {
+        figure.style.display = 'none';
+      }
+    });
 
-  seeMoreBtn.setAttribute('aria-expanded', 'false');
-  seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
+    seeMoreBtn.setAttribute('aria-expanded', 'false');
+    seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
 
-  seeMoreBtn.addEventListener('click', () => {
-    isExpanded = !isExpanded;
-    
-    if (isExpanded) {
-      // Mostrar todas las fotos con animación suave
-      allFigures.forEach((figure, index) => {
-        setTimeout(() => {
-          figure.style.display = 'block';
-          figure.style.opacity = '0';
-          figure.style.transform = 'translateY(20px)';
-          
+    seeMoreBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      
+      if (isExpanded) {
+        // Mostrar todas las fotos con animación suave
+        allFigures.forEach((figure, index) => {
           setTimeout(() => {
-            figure.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            figure.style.opacity = '1';
-            figure.style.transform = 'translateY(0)';
-          }, 50);
-        }, index * 50); // Efecto cascada
-      });
-      
-      seeMoreBtn.setAttribute('aria-expanded', 'true');
-      seeMoreBtn.textContent = 'Show less';
-    } else {
-      // Ocultar fotos adicionales
-      allFigures.forEach((figure, index) => {
-        if (index >= initialVisibleCount) {
-          figure.style.display = 'none';
-        }
-      });
-      
-      seeMoreBtn.setAttribute('aria-expanded', 'false');
-      seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
-      
-      // Scroll suave hacia la sección work
-      document.getElementById('work')?.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      });
-    }
-  });
-}
+            figure.style.display = 'block';
+            figure.style.opacity = '0';
+            figure.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+              figure.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              figure.style.opacity = '1';
+              figure.style.transform = 'translateY(0)';
+            }, 50);
+          }, index * 50); // Efecto cascada
+        });
+        
+        seeMoreBtn.setAttribute('aria-expanded', 'true');
+        seeMoreBtn.textContent = 'Show less';
+      } else {
+        // Ocultar fotos adicionales
+        allFigures.forEach((figure, index) => {
+          if (index >= initialVisibleCount) {
+            figure.style.display = 'none';
+          }
+        });
+        
+        seeMoreBtn.setAttribute('aria-expanded', 'false');
+        seeMoreBtn.textContent = `See more (+${allFigures.length - initialVisibleCount} photos)`;
+        
+        // Scroll suave hacia la sección work
+        document.getElementById('work')?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    });
+  }
 
   // ===========================
-  // LIGHTBOX – open/close/nav (RESTA DEL CÓDIGO IGUAL)
+  // LIGHTBOX – open/close/nav
   // ===========================
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = lightbox?.querySelector('.lightbox__img');
@@ -101,7 +101,7 @@ if (seeMoreBtn && gallery) {
     
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    lightboxClose.focus();
+    if (lightboxClose) lightboxClose.focus();
   }
 
   function openLightboxFromImage(clickedImg) {
@@ -182,7 +182,8 @@ if (seeMoreBtn && gallery) {
       
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
-        const headerHeight = document.querySelector('.nav').offsetHeight;
+        // Usar el navbar de Bootstrap
+        const headerHeight = document.querySelector('.custom-navbar').offsetHeight;
         const targetPosition = targetElement.offsetTop - headerHeight - 20;
         
         window.scrollTo({
@@ -194,22 +195,31 @@ if (seeMoreBtn && gallery) {
   });
 
   // ===========================
-  // Navbar background on scroll
+  // Navbar Bootstrap - Scroll effects
   // ===========================
-  const navbar = document.querySelector('.nav');
+  const navbar = document.querySelector('.custom-navbar');
   
   function updateNavbarBackground() {
     if (window.scrollY > 50) {
-      navbar.style.background = 'rgba(14, 17, 23, 0.5)';
-      navbar.style.backdropFilter = 'blur(20px)';
+      navbar.classList.add('scrolled');
     } else {
-      navbar.style.background = 'rgba(14, 17, 23, 0.0)';
-      navbar.style.backdropFilter = 'blur(8px)';
+      navbar.classList.remove('scrolled');
     }
   }
   
   window.addEventListener('scroll', updateNavbarBackground);
   updateNavbarBackground();
+
+  // Cerrar menú móvil al hacer clic en un enlace
+  document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      const navbarCollapse = document.querySelector('.navbar-collapse');
+      if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+        const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+        bsCollapse.hide();
+      }
+    });
+  });
 
   // ===========================
   // Image loading optimization
@@ -232,31 +242,4 @@ if (seeMoreBtn && gallery) {
   }
 
   console.log('SkyShot Lab JS loaded successfully!');
-});
-
-// ===========================
-// Navbar Bootstrap - Scroll effects
-// ===========================
-const navbar = document.querySelector('.custom-navbar');
-
-function updateNavbarBackground() {
-  if (window.scrollY > 50) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-}
-
-window.addEventListener('scroll', updateNavbarBackground);
-updateNavbarBackground();
-
-// Cerrar menú móvil al hacer clic en un enlace
-document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    if (navbarCollapse.classList.contains('show')) {
-      const bsCollapse = new bootstrap.Collapse(navbarCollapse);
-      bsCollapse.hide();
-    }
-  });
 });
