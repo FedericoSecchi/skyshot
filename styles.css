@@ -43,7 +43,7 @@ a:hover {
   padding: 72px 20px;
   max-width: 1200px;
   margin: 0 auto;
-  scroll-margin-top: 100px;
+  scroll-margin-top: 90px; /* Ajustado para navbar fijo */
 }
 
 .section__title {
@@ -58,60 +58,96 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Nav - SIN LÍNEA INFERIOR */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2px 20px;
-  background: rgba(14, 17, 23, 0.95);
+/* Navbar Bootstrap Personalizado */
+.custom-navbar {
+  background: rgba(14, 17, 23, 0.95) !important;
   backdrop-filter: blur(8px);
-  min-height: 100px;
+  padding: 10px 0;
+  transition: all 0.3s ease;
 }
 
-.logo img {
-  max-height: 150px;
-  display: block;
+.custom-navbar.scrolled {
+  background: rgba(14, 17, 23, 0.98) !important;
+  backdrop-filter: blur(20px);
+}
+
+.nav-logo {
+  max-height: 70px;
   transition: transform 0.2s ease;
 }
 
-.logo:hover img {
+.nav-logo:hover {
   transform: scale(1.05);
 }
 
-.nav nav {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.nav nav a {
-  padding: 10px 16px;
+/* Items del menú */
+.navbar-nav .nav-link {
+  color: var(--text) !important;
   font-weight: 500;
+  padding: 8px 16px !important;
+  margin: 0 4px;
   border-radius: 8px;
-  transition: background-color 0.2s ease;
-  font-size: 16px;
+  transition: all 0.2s ease;
 }
 
-.nav nav a:hover {
+.navbar-nav .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text) !important;
 }
 
-.nav .cta {
-  padding: 12px 24px;
-  border: 1px solid var(--brand);
+/* Botón Book especial */
+.navbar-nav .cta-btn {
+  border: 1px solid var(--brand) !important;
+  color: var(--brand) !important;
   border-radius: 12px;
-  color: var(--brand);
   font-weight: 600;
-  font-size: 16px;
+  margin-left: 8px;
 }
 
-.nav .cta:hover {
-  background-color: rgba(0, 229, 255, 0.1);
+.navbar-nav .cta-btn:hover {
+  background-color: rgba(0, 229, 255, 0.1) !important;
+  color: var(--brand) !important;
+}
+
+/* Hamburguesa personalizado */
+.navbar-toggler {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 4px 8px;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 2px var(--brand) !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Menú colapsado */
+@media (max-width: 991px) {
+  .navbar-collapse {
+    background: rgba(14, 17, 23, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #1f2632;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 10px 15px !important;
+    margin: 2px 0;
+    text-align: center;
+  }
+  
+  .navbar-nav .cta-btn {
+    margin: 8px 0 0 0;
+    text-align: center;
+  }
+  
+  .nav-logo {
+    max-height: 50px;
+  }
 }
 
 /* Hero */
@@ -280,7 +316,7 @@ html {
   margin-top: 32px;
 }
 
-/* About/Team Section - CORREGIDO */
+/* About/Team Section */
 .about__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -297,15 +333,24 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  
 }
 
 .about__img {
-  width: 200px;
-  height: 200px;
+  width: 220px;  /* Agrandada de 200px a 220px */
+  height: 220px; /* Agrandada de 200px a 220px */
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 24px;
   border: 3px solid var(--brand);
+  padding: 3%;
+}
+
+/* CORRECCIÓN ESPECÍFICA PARA FEDE (primer miembro) */
+.about__member:first-child .about__img {
+  object-position: center 1%;
+  object-fit: cover;
+  background: var(--card);
 }
 
 .about__member h3 {
@@ -313,6 +358,7 @@ html {
   margin: 0 0 16px;
   font-weight: 700;
   color: var(--text);
+  
 }
 
 .about__member p {
@@ -446,28 +492,12 @@ html {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
-  .logo img {
+  .nav-logo {
     max-height: 60px;
-  }
-  
-  .nav {
-    min-height: 90px;
-    padding: 16px 20px;
   }
 }
 
 @media (max-width: 768px) {
-  .nav {
-    flex-direction: column;
-    gap: 16px;
-    padding: 16px 20px;
-    min-height: auto;
-  }
-  
-  .nav nav {
-    gap: 12px;
-  }
-  
   .hero {
     padding: 48px 20px;
   }
@@ -478,7 +508,7 @@ html {
   
   .section {
     padding: 48px 20px;
-    scroll-margin-top: 120px;
+    scroll-margin-top: 100px;
   }
   
   .section__title {
@@ -499,7 +529,7 @@ html {
     max-width: 300px;
   }
   
-  .logo img {
+  .nav-logo {
     max-height: 50px;
   }
   
@@ -520,15 +550,6 @@ html {
     font-size: 28px;
   }
   
-  .nav nav {
-    gap: 8px;
-  }
-  
-  .nav nav a {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-  
   .card {
     padding: 24px 16px;
   }
@@ -537,18 +558,23 @@ html {
     grid-template-columns: 1fr;
   }
   
-  .logo img {
-    max-height: 100px;
+  .nav-logo {
+    max-height: 45px;
   }
   
   /* Team mobile */
   .about__img {
-    width: 150px;
-    height: 150px;
+    width: 180px;  /* Agrandada de 150px a 180px */
+    height: 180px; /* Agrandada de 150px a 180px */
   }
   
   .about__member h3 {
     font-size: 20px;
+  }
+  
+  /* Ajuste específico para Fede en móvil */
+  .about__member:first-child .about__img {
+    padding: 8px;
   }
 }
 
