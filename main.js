@@ -233,3 +233,30 @@ if (seeMoreBtn && gallery) {
 
   console.log('SkyShot Lab JS loaded successfully!');
 });
+
+// ===========================
+// Navbar Bootstrap - Scroll effects
+// ===========================
+const navbar = document.querySelector('.custom-navbar');
+
+function updateNavbarBackground() {
+  if (window.scrollY > 50) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+}
+
+window.addEventListener('scroll', updateNavbarBackground);
+updateNavbarBackground();
+
+// Cerrar menú móvil al hacer clic en un enlace
+document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+    if (navbarCollapse.classList.contains('show')) {
+      const bsCollapse = new bootstrap.Collapse(navbarCollapse);
+      bsCollapse.hide();
+    }
+  });
+});
