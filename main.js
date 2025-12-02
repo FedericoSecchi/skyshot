@@ -241,5 +241,29 @@ document.addEventListener('DOMContentLoaded', () => {
     images.forEach(img => imageObserver.observe(img));
   }
 
+  // ===========================
+  // HERO - Video background fade-in effect
+  // ===========================
+  const heroVideo = document.querySelector('.hero__video');
+  const heroContent = document.querySelector('.hero__content');
+  
+  if (heroVideo && heroContent) {
+    // Cuando el video esté listo y reproduciéndose, hacer fade-in del contenido
+    // Usamos 'loadeddata' para asegurar que el video ha cargado suficiente data
+    heroVideo.addEventListener('loadeddata', () => {
+      // Esperar un momento para que el video comience a reproducirse antes del fade-in
+      setTimeout(() => {
+        heroContent.classList.add('visible');
+      }, 800);
+    });
+    
+    // Fallback: si el video no dispara el evento, mostrar contenido después de 2.5 segundos
+    setTimeout(() => {
+      if (!heroContent.classList.contains('visible')) {
+        heroContent.classList.add('visible');
+      }
+    }, 2500);
+  }
+
   console.log('SkyShot Lab JS loaded successfully!');
 });

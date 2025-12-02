@@ -30,8 +30,8 @@
       <meta name="twitter:description" content="Aerial & watersports visuals from Lake Garda. Drone • Photo • Edit • Branding." />
       <meta name="twitter:image" content="https://federicosecchi.github.io/skyshot/Fotos/sailboat-sunset.jpg" />
     
-      <!-- 6. Performance opcional: precarga de la imagen del hero -->
-      <link rel="preload" as="image" href="Fotos/sailboat-sunset.jpg" />
+      <!-- 6. Performance opcional: precarga del video del hero -->
+      <link rel="preload" as="video" href="media/skyshot-hero.mp4" />
   </head>
 
   <body>
@@ -58,9 +58,6 @@
               <a class="nav-link" href="#work">Work</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#about">Team</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link cta-btn" href="#contact">Book</a>
             </li>
           </ul>
@@ -81,15 +78,10 @@
         </div>
         <!-- usa una foto/video tuyo (poster o <video muted loop autoplay playsinline>) -->
         <div class="hero__media">
-          <picture>
-            <img
-              src="Fotos/sailboat-sunset.jpg"
-              alt="Sailboat at golden hour, aerial view with mountain backdrop"
-              fetchpriority="high"
-              decoding="async"
-              width="1600"
-              height="900">
-          </picture>
+          <video autoplay muted loop playsinline class="hero__video">
+            <source src="./Video/montebrione.MP4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
       </section>
 
@@ -341,22 +333,6 @@
     </div>
   </section>
       
-      <!-- ABOUT -->
-      <section id="about" class="section about">
-          <h2 class="section__title">Team</h2>
-          <div class="about__grid">
-            <div class="about__member">
-              <img src="Fotos/fede-profile.jpeg" alt="Fede - Drone pilot" class="about__img" loading="lazy">
-              <h3>Fede</h3>
-              <p>Drone pilot, technical filming & editing. Focus on clean action and smooth motion.</p>
-            </div>
-            <div class="about__member">
-              <img src="Fotos/coti-profile.jpg" alt="Coti - Branding & visuals" class="about__img" loading="lazy">
-              <h3>Coti</h3>
-              <p>Branding, aesthetic direction & animations. Cohesive look for reels and campaigns.</p>
-            </div>
-          </div>
-        </section>
 
       <!-- CONTACT -->
       <section id="contact" class="section contact">
@@ -365,7 +341,7 @@
         <div class="contact__actions">
           <a class="btn" href="https://wa.me/393332991417" target="_blank" rel="noopener">WhatsApp</a>
           <a class="btn alt" href="mailto:hello@skyshotlab.com">Email</a>
-          <a class="link" href="https://instagram.com/skyshot.lab" target="_blank" rel="noopener">@skyshot.lab</a>
+          <a class="btn alt" href="https://instagram.com/skyshot.lab" target="_blank" rel="noopener">Instagram</a>
         </div>
       </section>
     </main>
