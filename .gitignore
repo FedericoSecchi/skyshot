@@ -1,6 +1,7 @@
 # Videos grandes (no usar Git LFS)
-Video/*.mp4
-Video/*.MP4
+# Permitir videos pequeños (<50MB) como Sequence 01.mp4
+# Video/*.mp4
+# Video/*.MP4
 Video/*.mov
 Video/*.MOV
 
