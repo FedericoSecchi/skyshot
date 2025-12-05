@@ -192,16 +192,58 @@ function App() {
 
   useEffect(() => {
     const handleDomeImageClick = (e) => {
-      const domeImage = e.target.closest('.dome-image')
-      if (domeImage) {
+      // Buscar la imagen o su contenedor padre
+      const domeImage = e.target.closest('.dome-image') || (e.target.tagName === 'IMG' && e.target.classList.contains('dome-image') ? e.target : null)
+      const itemImage = e.target.closest('.item__image')
+      
+      if (domeImage || itemImage) {
+        // Prevenir TODA propagación y comportamiento por defecto INMEDIATAMENTE
         e.preventDefault()
         e.stopPropagation()
-        const src = domeImage.dataset.src || domeImage.src
+        e.stopImmediatePropagation()
+        
+        // Obtener la URL de la imagen
+        const src = domeImage?.dataset.src || domeImage?.src || itemImage?.querySelector('img')?.src || e.target.src
+        
         if (src) {
+          // Cerrar cualquier lightbox del DomeGallery que esté abierto
+          const domeGalleryViewer = document.querySelector('.sphere-root .viewer')
+          if (domeGalleryViewer) {
+            const existingOverlay = domeGalleryViewer.querySelector('.enlarge')
+            if (existingOverlay) {
+              existingOverlay.remove()
+            }
+          }
+          
+          // Desactivar el atributo data-enlarging del DomeGallery
+          const sphereRoot = document.querySelector('.sphere-root')
+          if (sphereRoot) {
+            sphereRoot.removeAttribute('data-enlarging')
+            // También desactivar cualquier estado de opening
+            const scrim = sphereRoot.querySelector('.scrim')
+            if (scrim) {
+              scrim.style.opacity = '0'
+              scrim.style.pointerEvents = 'none'
+            }
+          }
+          
+          // Abrir nuestro lightbox instantáneamente (sin delay)
           setDomeLightboxImage(src)
           setDomeLightboxOpen(true)
           document.body.style.overflow = 'hidden'
+          
+          // Forzar un re-render inmediato para evitar cualquier delay
+          requestAnimationFrame(() => {
+            const lightbox = document.querySelector('.dome-lightbox')
+            if (lightbox) {
+              lightbox.style.opacity = '1'
+              lightbox.style.visibility = 'visible'
+            }
+          })
         }
+        
+        // Retornar false para prevenir cualquier otro handler
+        return false
       }
     }
 
@@ -211,11 +253,13 @@ function App() {
       }
     }
 
-    document.addEventListener('click', handleDomeImageClick, true)
+    // Usar capture phase con CAPTURE para interceptar ANTES que llegue a React
+    // Y usar once: false para que siempre esté activo
+    document.addEventListener('click', handleDomeImageClick, { capture: true, passive: false })
     document.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      document.removeEventListener('click', handleDomeImageClick, true)
+      document.removeEventListener('click', handleDomeImageClick, { capture: true })
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [domeLightboxOpen, closeDomeLightbox])
@@ -473,34 +517,10 @@ function App() {
         <div 
           className="dome-lightbox"
           onClick={handleDomeLightboxBackdropClick}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            margin: 0,
-            padding: 0
-          }}
         >
           <img 
             src={domeLightboxImage} 
             alt="Fullscreen view"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              maxWidth: '100vw',
-              maxHeight: '100vh',
-              objectFit: 'contain',
-              display: 'block',
-              margin: 0,
-              padding: 0
-            }}
           />
         </div>
       )}
