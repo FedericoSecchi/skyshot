@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 // React Bits is installed and available for use
 // import { Button, Hero, Card } from 'react-bits'
 import DomeGallery from './components/DomeGallery'
@@ -81,6 +81,8 @@ function App() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [navbarScrolled, setNavbarScrolled] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
+  const [domeLightboxOpen, setDomeLightboxOpen] = useState(false)
+  const [domeLightboxImage, setDomeLightboxImage] = useState('')
   const videoRef = useRef(null)
   const navbarRef = useRef(null)
 
@@ -174,6 +176,49 @@ function App() {
       })
     }
   }
+
+  // Dome lightbox handlers
+  const closeDomeLightbox = useCallback(() => {
+    setDomeLightboxOpen(false)
+    setDomeLightboxImage('')
+    document.body.style.overflow = ''
+  }, [])
+
+  const handleDomeLightboxBackdropClick = useCallback((e) => {
+    if (e.target.classList.contains('dome-lightbox')) {
+      closeDomeLightbox()
+    }
+  }, [closeDomeLightbox])
+
+  useEffect(() => {
+    const handleDomeImageClick = (e) => {
+      const domeImage = e.target.closest('.dome-image')
+      if (domeImage) {
+        e.preventDefault()
+        e.stopPropagation()
+        const src = domeImage.dataset.src || domeImage.src
+        if (src) {
+          setDomeLightboxImage(src)
+          setDomeLightboxOpen(true)
+          document.body.style.overflow = 'hidden'
+        }
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && domeLightboxOpen) {
+        closeDomeLightbox()
+      }
+    }
+
+    document.addEventListener('click', handleDomeImageClick, true)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('click', handleDomeImageClick, true)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [domeLightboxOpen, closeDomeLightbox])
 
   return (
     <>
@@ -422,6 +467,43 @@ function App() {
       <footer className="footer">
         <p>© SkyShot Lab. Aerial & Outdoor Visuals.</p>
       </footer>
+
+      {/* Dome Lightbox */}
+      {domeLightboxOpen && (
+        <div 
+          className="dome-lightbox"
+          onClick={handleDomeLightboxBackdropClick}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            margin: 0,
+            padding: 0
+          }}
+        >
+          <img 
+            src={domeLightboxImage} 
+            alt="Fullscreen view"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              objectFit: 'contain',
+              display: 'block',
+              margin: 0,
+              padding: 0
+            }}
+          />
+        </div>
+      )}
     </>
   )
 }
