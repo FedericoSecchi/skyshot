@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-// React Bits is installed and available for use
-// import { Button, Hero, Card } from 'react-bits'
 import DomeGallery from './components/DomeGallery'
 import './index.css'
 
@@ -76,18 +74,12 @@ const galleryImages = [
 ]
 
 function App() {
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [navbarScrolled, setNavbarScrolled] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
   const [domeLightboxOpen, setDomeLightboxOpen] = useState(false)
   const [domeLightboxImage, setDomeLightboxImage] = useState('')
   const videoRef = useRef(null)
   const navbarRef = useRef(null)
-
-  const initialVisibleCount = 6
-  const visibleImages = isExpanded ? galleryImages : galleryImages.slice(0, initialVisibleCount)
 
   // Navbar scroll effect
   useEffect(() => {
@@ -118,50 +110,6 @@ function App() {
       }
     }
   }, [heroVisible])
-
-  // Lightbox keyboard navigation
-  useEffect(() => {
-    if (!lightboxOpen) return
-
-    const handleKeyDown = (e) => {
-      switch(e.key) {
-        case 'Escape':
-          setLightboxOpen(false)
-          break
-        case 'ArrowRight':
-          setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length)
-          break
-        case 'ArrowLeft':
-          setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = ''
-    }
-  }, [lightboxOpen])
-
-  const openLightbox = (index) => {
-    setCurrentImageIndex(index)
-    setLightboxOpen(true)
-  }
-
-  const closeLightbox = () => {
-    setLightboxOpen(false)
-  }
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length)
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length)
-  }
 
   const handleSmoothScroll = (e, targetId) => {
     e.preventDefault()
@@ -389,7 +337,6 @@ function App() {
           </div>
         </section>
 
-        {/* WORK - Replaced with DomeGallery */}
         <section id="work" style={{ height: '100vh', padding: 0, margin: 0, maxWidth: '100%', background: 'var(--bg)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <h2 className="section__title" style={{ margin: 0, padding: '8px 0' }}>
             Selected Work
@@ -407,86 +354,6 @@ function App() {
           </div>
         </section>
 
-        {/* OLD SELECTED WORK SECTION - COMMENTED OUT
-        <section id="work" className="section">
-          <h2 className="section__title">Selected Work</h2>
-          <div className="grid gallery">
-            {visibleImages.map((img, index) => (
-              <figure 
-                key={index}
-                onClick={() => openLightbox(galleryImages.indexOf(img))}
-                style={{ 
-                  display: index < initialVisibleCount || isExpanded ? 'block' : 'none',
-                  opacity: index < initialVisibleCount || isExpanded ? 1 : 0,
-                  transition: 'opacity 0.5s ease, transform 0.5s ease'
-                }}
-              >
-                <img src={img.src} alt={img.alt} loading="lazy" />
-              </figure>
-            ))}
-          </div>
-          <div className="see-more-container">
-            <button 
-              className="btn" 
-              onClick={() => {
-                setIsExpanded(!isExpanded)
-                if (!isExpanded) {
-                  setTimeout(() => {
-                    document.getElementById('work')?.scrollIntoView({ 
-                      behavior: 'smooth', 
-                      block: 'start' 
-                    })
-                  }, 100)
-                }
-              }}
-            >
-              {isExpanded 
-                ? 'Show less' 
-                : `See more (+${galleryImages.length - initialVisibleCount} photos)`
-              }
-            </button>
-          </div>
-
-          <div 
-            className={`lightbox ${lightboxOpen ? 'active' : 'hidden'}`}
-            onClick={(e) => e.target.classList.contains('lightbox') && closeLightbox()}
-            aria-hidden={!lightboxOpen}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Image preview"
-          >
-            <button 
-              type="button" 
-              className="lightbox__close" 
-              aria-label="Close"
-              onClick={closeLightbox}
-            >
-              &times;
-            </button>
-            <button 
-              type="button" 
-              className="lightbox__prev" 
-              aria-label="Previous image"
-              onClick={prevImage}
-            >
-              &#10094;
-            </button>
-            <img 
-              className="lightbox__img" 
-              src={galleryImages[currentImageIndex]?.src}
-              alt={galleryImages[currentImageIndex]?.alt || 'Preview of selected work'}
-            />
-            <button 
-              type="button" 
-              className="lightbox__next" 
-              aria-label="Next image"
-              onClick={nextImage}
-            >
-              &#10095;
-            </button>
-          </div>
-        </section>
-        */}
 
         {/* CONTACT */}
         <section id="contact" className="section contact">
@@ -502,8 +369,6 @@ function App() {
             <a className="btn alt" href="https://instagram.com/skyshot.lab" target="_blank" rel="noopener">
               Instagram
             </a>
-            {/* React Bits library is installed and ready to use */}
-            {/* Example: import { Button, Hero, Card } from 'react-bits' */}
           </div>
         </section>
       </main>

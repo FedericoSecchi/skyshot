@@ -15,14 +15,10 @@
   "dependencies": {
     "@use-gesture/react": "^10.3.1",
     "react": "^19.2.0",
-    "react-bits": "^1.0.5",
-    "react-dom": "^19.2.0",
-    "react-native-web": "^0.21.2"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
