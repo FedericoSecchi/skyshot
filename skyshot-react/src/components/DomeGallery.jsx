@@ -9,7 +9,7 @@ import { useGesture } from '@use-gesture/react';
 import './DomeGallery.css';
 
 const DEFAULTS = {
-  maxVerticalRotationDeg: 0, // Disabled vertical rotation
+  maxVerticalRotationDeg: 5,
   dragSensitivity: 20,
   enlargeTransitionMs: 300,
   segments: 35
@@ -235,9 +235,7 @@ export default function DomeGallery({
   ]);
 
   useEffect(() => {
-    // Ensure vertical rotation is always 0 on mount
-    rotationRef.current.x = 0;
-    applyTransform(0, rotationRef.current.y);
+    applyTransform(rotationRef.current.x, rotationRef.current.y);
   }, []);
 
   const stopInertia = useCallback(() => {
@@ -268,8 +266,7 @@ export default function DomeGallery({
           inertiaRAF.current = null;
           return;
         }
-        // Vertical rotation disabled - always keep x at 0
-        const nextX = 0;
+        const nextX = clamp(rotationRef.current.x - vY / 200, -maxVerticalRotationDeg, maxVerticalRotationDeg);
         const nextY = wrapAngleSigned(rotationRef.current.y + vX / 200);
         rotationRef.current = { x: nextX, y: nextY };
         applyTransform(nextX, nextY);
@@ -289,9 +286,7 @@ export default function DomeGallery({
         const evt = event;
         draggingRef.current = true;
         movedRef.current = false;
-        // Ensure vertical rotation is locked to 0
-        rotationRef.current.x = 0;
-        startRotRef.current = { x: 0, y: rotationRef.current.y };
+        startRotRef.current = { ...rotationRef.current };
         startPosRef.current = { x: evt.clientX, y: evt.clientY };
       },
       onDrag: ({ event, last, velocity = [0, 0], direction = [0, 0], movement }) => {
@@ -303,8 +298,11 @@ export default function DomeGallery({
           const dist2 = dxTotal * dxTotal + dyTotal * dyTotal;
           if (dist2 > 16) movedRef.current = true;
         }
-        // Vertical rotation disabled - always keep x at 0
-        const nextX = 0;
+        const nextX = clamp(
+          startRotRef.current.x - dyTotal / dragSensitivity,
+          -maxVerticalRotationDeg,
+          maxVerticalRotationDeg
+        );
         const nextY = wrapAngleSigned(startRotRef.current.y + dxTotal / dragSensitivity);
         if (rotationRef.current.x !== nextX || rotationRef.current.y !== nextY) {
           rotationRef.current = { x: nextX, y: nextY };

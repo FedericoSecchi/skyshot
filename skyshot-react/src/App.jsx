@@ -145,8 +145,8 @@ function App() {
     fit: 2.0,
     minRadius: 140,
     maxRadius: 1000,
-    maxVerticalRotationDeg: 0, // Vertical rotation disabled
-    segments: 24,
+    maxVerticalRotationDeg: 10,
+    segments: 22,
     dragDampening: 5.5,
     grayscale: false,
     overlayBlurColor: "rgba(14, 17, 23, 0.9)",
