@@ -513,3 +513,112 @@ body:has(.dome-lightbox) .sphere-root .viewer .scrim {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* Customize Panel */
+.customize-panel {
+  background: #0a0a0a;
+  padding: 20px;
+  border-radius: 8px;
+  color: white;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 240px;
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.customize-panel label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  gap: 4px;
+}
+
+.customize-panel input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+.customize-panel__value {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.customize-panel__checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.customize-panel__checkbox input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  padding: 20px;
+  background: black;
+  border-radius: 10px;
+  max-width: 95vw;
+  max-height: 95vh;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 95vh;
+  border-radius: 8px;
+  display: block;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  color: white;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .customize-panel {
+    width: 200px;
+    top: 80px;
+    right: 10px;
+    padding: 16px;
+  }
+}

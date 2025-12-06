@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import DomeGallery from './components/DomeGallery'
+import CustomizePanel from './components/CustomizePanel'
+import ImageModal from './components/ImageModal'
 import './index.css'
 
 // Get base URL for assets (works in both dev and production)
@@ -78,6 +80,16 @@ function App() {
   const [heroVisible, setHeroVisible] = useState(false)
   const [domeLightboxOpen, setDomeLightboxOpen] = useState(false)
   const [domeLightboxImage, setDomeLightboxImage] = useState('')
+  const [showCustomizePanel, setShowCustomizePanel] = useState(false)
+  const [gallerySettings, setGallerySettings] = useState({
+    fit: 0.7,
+    minRadius: 500,
+    maxRadius: 1000,
+    maxVerticalRotation: 5,
+    segments: 35,
+    dragDampening: 2,
+    grayscale: false
+  })
   const videoRef = useRef(null)
   const navbarRef = useRef(null)
 
@@ -337,19 +349,47 @@ function App() {
           </div>
         </section>
 
-        <section id="work" style={{ height: '100vh', padding: 0, margin: 0, maxWidth: '100%', background: 'var(--bg)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <section id="work" style={{ height: '100vh', padding: 0, margin: 0, maxWidth: '100%', background: 'var(--bg)', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
           <h2 className="section__title" style={{ margin: 0, padding: '8px 0' }}>
             Selected Work
           </h2>
+          <button 
+            onClick={() => setShowCustomizePanel(!showCustomizePanel)}
+            style={{
+              position: 'absolute',
+              top: '60px',
+              right: '20px',
+              zIndex: 1001,
+              background: 'rgba(0, 229, 255, 0.1)',
+              border: '1px solid var(--brand)',
+              color: 'var(--brand)',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 600
+            }}
+          >
+            {showCustomizePanel ? 'Hide' : 'Customize'} Gallery
+          </button>
+          {showCustomizePanel && (
+            <CustomizePanel 
+              settings={gallerySettings} 
+              setSettings={setGallerySettings} 
+            />
+          )}
           <div style={{ flex: 1, minHeight: 0, width: '100%', height: '100%', margin: 0, padding: 0 }}>
             <DomeGallery 
               images={galleryImages} 
               overlayBlurColor="rgba(14, 17, 23, 0.9)" 
-              grayscale={false}
-              fit={0.7}
+              grayscale={gallerySettings.grayscale}
+              fit={gallerySettings.fit}
               padFactor={0.08}
-              minRadius={500}
-              maxRadius={1000}
+              minRadius={gallerySettings.minRadius}
+              maxRadius={gallerySettings.maxRadius}
+              maxVerticalRotationDeg={gallerySettings.maxVerticalRotation}
+              segments={gallerySettings.segments}
+              dragDampening={gallerySettings.dragDampening}
             />
           </div>
         </section>
@@ -377,17 +417,12 @@ function App() {
         <p>© SkyShot Lab. Aerial & Outdoor Visuals.</p>
       </footer>
 
-      {/* Dome Lightbox */}
+      {/* Dome Lightbox - Using ImageModal */}
       {domeLightboxOpen && (
-        <div 
-          className="dome-lightbox"
-          onClick={handleDomeLightboxBackdropClick}
-        >
-          <img 
-            src={domeLightboxImage} 
-            alt="Fullscreen view"
-          />
-        </div>
+        <ImageModal 
+          imageSrc={domeLightboxImage}
+          onClose={closeDomeLightbox}
+        />
       )}
     </>
   )
