@@ -24,15 +24,17 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
+        working-directory: ./skyshot-react
         run: npm ci
 
       - name: Build
+        working-directory: ./skyshot-react
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./dist
+          path: ./skyshot-react/dist
 
   deploy:
     needs: build
