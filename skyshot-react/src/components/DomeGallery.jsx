@@ -9,7 +9,7 @@ import { useGesture } from '@use-gesture/react';
 import './DomeGallery.css';
 
 const DEFAULTS = {
-  maxVerticalRotationDeg: 5,
+  maxVerticalRotationDeg: 0, // Disabled vertical rotation
   dragSensitivity: 20,
   enlargeTransitionMs: 300,
   segments: 35
@@ -112,7 +112,7 @@ export default function DomeGallery({
   const focusedElRef = useRef(null);
   const originalTilePositionRef = useRef(null);
 
-  const rotationRef = useRef({ x: 0, y: 0 });
+  const rotationRef = useRef({ x: 0, y: 0 }); // x is vertical rotation, locked to 0
   const startRotRef = useRef({ x: 0, y: 0 });
   const startPosRef = useRef(null);
   const draggingRef = useRef(false);
@@ -235,7 +235,9 @@ export default function DomeGallery({
   ]);
 
   useEffect(() => {
-    applyTransform(rotationRef.current.x, rotationRef.current.y);
+    // Ensure vertical rotation is always 0 on mount
+    rotationRef.current.x = 0;
+    applyTransform(0, rotationRef.current.y);
   }, []);
 
   const stopInertia = useCallback(() => {
@@ -266,7 +268,8 @@ export default function DomeGallery({
           inertiaRAF.current = null;
           return;
         }
-        const nextX = clamp(rotationRef.current.x - vY / 200, -maxVerticalRotationDeg, maxVerticalRotationDeg);
+        // Vertical rotation disabled - always keep x at 0
+        const nextX = 0;
         const nextY = wrapAngleSigned(rotationRef.current.y + vX / 200);
         rotationRef.current = { x: nextX, y: nextY };
         applyTransform(nextX, nextY);
@@ -286,7 +289,9 @@ export default function DomeGallery({
         const evt = event;
         draggingRef.current = true;
         movedRef.current = false;
-        startRotRef.current = { ...rotationRef.current };
+        // Ensure vertical rotation is locked to 0
+        rotationRef.current.x = 0;
+        startRotRef.current = { x: 0, y: rotationRef.current.y };
         startPosRef.current = { x: evt.clientX, y: evt.clientY };
       },
       onDrag: ({ event, last, velocity = [0, 0], direction = [0, 0], movement }) => {
@@ -298,11 +303,8 @@ export default function DomeGallery({
           const dist2 = dxTotal * dxTotal + dyTotal * dyTotal;
           if (dist2 > 16) movedRef.current = true;
         }
-        const nextX = clamp(
-          startRotRef.current.x - dyTotal / dragSensitivity,
-          -maxVerticalRotationDeg,
-          maxVerticalRotationDeg
-        );
+        // Vertical rotation disabled - always keep x at 0
+        const nextX = 0;
         const nextY = wrapAngleSigned(startRotRef.current.y + dxTotal / dragSensitivity);
         if (rotationRef.current.x !== nextX || rotationRef.current.y !== nextY) {
           rotationRef.current = { x: nextX, y: nextY };

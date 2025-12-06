@@ -17,10 +17,8 @@ const ImageModal = ({ image, onClose }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <img src={image} alt="Expanded" className="modal-image" />
-        <button className="modal-close" onClick={onClose} aria-label="Close modal">✖</button>
-      </div>
+      <img src={image} alt="Expanded" className="modal-image" onClick={(e) => e.stopPropagation()} />
+      <button className="modal-close" onClick={onClose} aria-label="Close modal">✖</button>
     </div>
   );
 };
