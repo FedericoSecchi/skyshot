@@ -1,32 +1,28 @@
-import { useEffect } from 'react';
+// ImageModal.jsx actualizado para garantizar botón de cierre visible en todas las resoluciones
+import React, { useEffect } from "react";
+import "../index.css";
 
-// ImageModal component for fullscreen image preview
-function ImageModal({ imageSrc, onClose }) {
+const ImageModal = ({ image, onClose }) => {
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+    const handleEsc = (e) => {
+      if (e.key === "Escape") onClose();
     };
-    
-    document.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
-    
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEsc);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleEsc);
     };
   }, [onClose]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <img src={image} alt="Expanded" className="modal-image" />
         <button className="modal-close" onClick={onClose} aria-label="Close modal">✖</button>
-        <img src={imageSrc} alt="Fullscreen preview" className="modal-image" />
       </div>
     </div>
   );
-}
+};
 
-export default ImageModal
-
+export default ImageModal;

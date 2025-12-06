@@ -1,3 +1,7 @@
+// 🔥 Auditoría recomendada: revisá que las imágenes usen lazy loading (`loading='lazy'`), 
+// que el mapa de objetos no cause renders innecesarios, y que el componente esté memoizado 
+// si no hay props cambiando.
+
 import { useEffect, useMemo, useRef, useCallback } from 'react';
 
 import { useGesture } from '@use-gesture/react';
@@ -96,7 +100,8 @@ export default function DomeGallery({
   openedImageHeight = '350px',
   imageBorderRadius = '30px',
   openedImageBorderRadius = '30px',
-  grayscale = true
+  grayscale = true,
+  onImageClick = null
 }) {
   const rootRef = useRef(null);
   const mainRef = useRef(null);
@@ -544,9 +549,21 @@ export default function DomeGallery({
       if (movedRef.current) return;
       if (performance.now() - lastDragEndAt.current < 80) return;
       if (openingRef.current) return;
+      
+      // Si hay un callback onImageClick, usarlo en lugar del lightbox interno
+      if (onImageClick) {
+        const parent = e.currentTarget.parentElement;
+        const imageSrc = parent?.dataset.src || e.currentTarget.querySelector('img')?.src || '';
+        if (imageSrc) {
+          onImageClick(imageSrc);
+        }
+        return;
+      }
+      
+      // Comportamiento por defecto: usar lightbox interno
       openItemFromElement(e.currentTarget);
     },
-    [openItemFromElement]
+    [openItemFromElement, onImageClick]
   );
 
   const onTilePointerUp = useCallback(
@@ -556,9 +573,21 @@ export default function DomeGallery({
       if (movedRef.current) return;
       if (performance.now() - lastDragEndAt.current < 80) return;
       if (openingRef.current) return;
+      
+      // Si hay un callback onImageClick, usarlo en lugar del lightbox interno
+      if (onImageClick) {
+        const parent = e.currentTarget.parentElement;
+        const imageSrc = parent?.dataset.src || e.currentTarget.querySelector('img')?.src || '';
+        if (imageSrc) {
+          onImageClick(imageSrc);
+        }
+        return;
+      }
+      
+      // Comportamiento por defecto: usar lightbox interno
       openItemFromElement(e.currentTarget);
     },
-    [openItemFromElement]
+    [openItemFromElement, onImageClick]
   );
 
   useEffect(() => {

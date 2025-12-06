@@ -1,6 +1,18 @@
+// Restaurar la estructura completa de la web
+// 1. Mantener el DomeGallery y el ImageModal con sus últimos ajustes
+// 2. Asegurar que estén presentes las siguientes secciones en App.jsx:
+//    - Hero
+//    - About
+//    - SelectedWork
+//    - Contact
+//    - Footer
+// 3. Asegurarse de que DomeGallery esté dentro de SelectedWork como antes
+// 4. Verificar que todos los componentes estén bien importados y ordenados
+// 5. No eliminar el nuevo ImageModal, solo asegurar que todo lo anterior conviva correctamente
+// 6. Confirmar que el render final de App.jsx refleje la estructura original + el nuevo modal
+
 import { useState, useEffect, useRef, useCallback } from 'react'
 import DomeGallery from './components/DomeGallery'
-import CustomizePanel from './components/CustomizePanel'
 import ImageModal from './components/ImageModal'
 import './index.css'
 
@@ -9,7 +21,6 @@ const BASE_URL = import.meta.env.BASE_URL
 
 // Helper function to get asset path
 const assetPath = (path) => {
-  // Remove leading slash if present, BASE_URL already includes trailing slash
   const cleanPath = path.startsWith('/') ? path.slice(1) : path
   return `${BASE_URL}${cleanPath}`
 }
@@ -78,18 +89,7 @@ const galleryImages = [
 function App() {
   const [navbarScrolled, setNavbarScrolled] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
-  const [domeLightboxOpen, setDomeLightboxOpen] = useState(false)
-  const [domeLightboxImage, setDomeLightboxImage] = useState('')
-  const [showCustomizePanel, setShowCustomizePanel] = useState(false)
-  const [gallerySettings, setGallerySettings] = useState({
-    fit: 0.7,
-    minRadius: 500,
-    maxRadius: 1000,
-    maxVerticalRotation: 5,
-    segments: 35,
-    dragDampening: 2,
-    grayscale: false
-  })
+  const [modalImage, setModalImage] = useState(null)
   const videoRef = useRef(null)
   const navbarRef = useRef(null)
 
@@ -137,92 +137,21 @@ function App() {
     }
   }
 
-  // Dome lightbox handlers
-  const closeDomeLightbox = useCallback(() => {
-    setDomeLightboxOpen(false)
-    setDomeLightboxImage('')
-    document.body.style.overflow = ''
+  const handleImageClick = useCallback((imageSrc) => {
+    setModalImage(imageSrc)
   }, [])
 
-  const handleDomeLightboxBackdropClick = useCallback((e) => {
-    if (e.target.classList.contains('dome-lightbox')) {
-      closeDomeLightbox()
-    }
-  }, [closeDomeLightbox])
-
-  useEffect(() => {
-    const handleDomeImageClick = (e) => {
-      // Buscar la imagen o su contenedor padre
-      const domeImage = e.target.closest('.dome-image') || (e.target.tagName === 'IMG' && e.target.classList.contains('dome-image') ? e.target : null)
-      const itemImage = e.target.closest('.item__image')
-      
-      if (domeImage || itemImage) {
-        // Prevenir TODA propagación y comportamiento por defecto INMEDIATAMENTE
-        e.preventDefault()
-        e.stopPropagation()
-        e.stopImmediatePropagation()
-        
-        // Obtener la URL de la imagen
-        const src = domeImage?.dataset.src || domeImage?.src || itemImage?.querySelector('img')?.src || e.target.src
-        
-        if (src) {
-          // Cerrar cualquier lightbox del DomeGallery que esté abierto
-          const domeGalleryViewer = document.querySelector('.sphere-root .viewer')
-          if (domeGalleryViewer) {
-            const existingOverlay = domeGalleryViewer.querySelector('.enlarge')
-            if (existingOverlay) {
-              existingOverlay.remove()
-            }
-          }
-          
-          // Desactivar el atributo data-enlarging del DomeGallery
-          const sphereRoot = document.querySelector('.sphere-root')
-          if (sphereRoot) {
-            sphereRoot.removeAttribute('data-enlarging')
-            // También desactivar cualquier estado de opening
-            const scrim = sphereRoot.querySelector('.scrim')
-            if (scrim) {
-              scrim.style.opacity = '0'
-              scrim.style.pointerEvents = 'none'
-            }
-          }
-          
-          // Abrir nuestro lightbox instantáneamente (sin delay)
-          setDomeLightboxImage(src)
-          setDomeLightboxOpen(true)
-          document.body.style.overflow = 'hidden'
-          
-          // Forzar un re-render inmediato para evitar cualquier delay
-          requestAnimationFrame(() => {
-            const lightbox = document.querySelector('.dome-lightbox')
-            if (lightbox) {
-              lightbox.style.opacity = '1'
-              lightbox.style.visibility = 'visible'
-            }
-          })
-        }
-        
-        // Retornar false para prevenir cualquier otro handler
-        return false
-      }
-    }
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && domeLightboxOpen) {
-        closeDomeLightbox()
-      }
-    }
-
-    // Usar capture phase con CAPTURE para interceptar ANTES que llegue a React
-    // Y usar once: false para que siempre esté activo
-    document.addEventListener('click', handleDomeImageClick, { capture: true, passive: false })
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('click', handleDomeImageClick, { capture: true })
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [domeLightboxOpen, closeDomeLightbox])
+  const gallerySettings = {
+    fit: 2.0,
+    minRadius: 140,
+    maxRadius: 1000,
+    maxVerticalRotationDeg: 44,
+    segments: 24,
+    dragDampening: 5.5,
+    grayscale: false,
+    overlayBlurColor: "rgba(14, 17, 23, 0.9)",
+    padFactor: 0.08
+  }
 
   return (
     <>
@@ -349,51 +278,27 @@ function App() {
           </div>
         </section>
 
+        {/* SELECTED WORK - Con DomeGallery */}
         <section id="work" style={{ height: '100vh', padding: 0, margin: 0, maxWidth: '100%', background: 'var(--bg)', overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
           <h2 className="section__title" style={{ margin: 0, padding: '8px 0' }}>
             Selected Work
           </h2>
-          <button 
-            onClick={() => setShowCustomizePanel(!showCustomizePanel)}
-            style={{
-              position: 'absolute',
-              top: '60px',
-              right: '20px',
-              zIndex: 1001,
-              background: 'rgba(0, 229, 255, 0.1)',
-              border: '1px solid var(--brand)',
-              color: 'var(--brand)',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 600
-            }}
-          >
-            {showCustomizePanel ? 'Hide' : 'Customize'} Gallery
-          </button>
-          {showCustomizePanel && (
-            <CustomizePanel 
-              settings={gallerySettings} 
-              setSettings={setGallerySettings} 
-            />
-          )}
           <div style={{ flex: 1, minHeight: 0, width: '100%', height: '100%', margin: 0, padding: 0 }}>
             <DomeGallery 
-              images={galleryImages} 
-              overlayBlurColor="rgba(14, 17, 23, 0.9)" 
-              grayscale={gallerySettings.grayscale}
+              images={galleryImages}
               fit={gallerySettings.fit}
-              padFactor={0.08}
               minRadius={gallerySettings.minRadius}
               maxRadius={gallerySettings.maxRadius}
-              maxVerticalRotationDeg={gallerySettings.maxVerticalRotation}
+              maxVerticalRotationDeg={gallerySettings.maxVerticalRotationDeg}
               segments={gallerySettings.segments}
               dragDampening={gallerySettings.dragDampening}
+              grayscale={gallerySettings.grayscale}
+              overlayBlurColor={gallerySettings.overlayBlurColor}
+              padFactor={gallerySettings.padFactor}
+              onImageClick={handleImageClick}
             />
           </div>
         </section>
-
 
         {/* CONTACT */}
         <section id="contact" className="section contact">
@@ -417,12 +322,9 @@ function App() {
         <p>© SkyShot Lab. Aerial & Outdoor Visuals.</p>
       </footer>
 
-      {/* Dome Lightbox - Using ImageModal */}
-      {domeLightboxOpen && (
-        <ImageModal 
-          imageSrc={domeLightboxImage}
-          onClose={closeDomeLightbox}
-        />
+      {/* ImageModal - Mantener con los últimos ajustes */}
+      {modalImage && (
+        <ImageModal image={modalImage} onClose={() => setModalImage(null)} />
       )}
     </>
   )
