@@ -4,7 +4,7 @@ import brushAnimation from '../../assets/lottie/paint-brush.json'
 
 export default function ServiceIconBrush() {
   return (
-    <div className="card__icon card__icon--lottie" style={{ width: 120, height: 120 }} aria-hidden="true">
+    <div className="card__icon card__icon--lottie" style={{ width: 160, height: 160 }} aria-hidden="true">
       <Lottie
         animationData={brushAnimation}
         loop={true}
