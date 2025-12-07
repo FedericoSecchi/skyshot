@@ -37,9 +37,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef(null)
 
-  // Navbar scroll effect - show navbar when scrolling
+  // Navbar scroll effect - show navbar background when scrolling
   useEffect(() => {
-    const scrollHandler = () => {
+    const handleScroll = () => {
       if (window.scrollY > 10) {
         document.body.classList.add('navbar-scrolled')
       } else {
@@ -47,8 +47,8 @@ function App() {
       }
     }
 
-    window.addEventListener('scroll', scrollHandler)
-    return () => window.removeEventListener('scroll', scrollHandler)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // Hero video loading - optimized for universal autoplay and smooth loader transition

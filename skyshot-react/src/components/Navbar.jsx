@@ -9,14 +9,58 @@ const assetPath = (path) => {
 }
 
 const Navbar = () => {
+  const handleSmoothScroll = (e, targetId) => {
+    e.preventDefault()
+    const element = document.querySelector(targetId)
+    if (element) {
+      const targetPosition = element.offsetTop - 20
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
     <nav className="custom-navbar">
-      <img 
-        src={assetPath('skyshot-logo/skyshot-logo.png')} 
-        alt="SkyShot Lab Logo" 
-        className="navbar-logo" 
-      />
-      {/* Si querés agregar botones, se pueden poner acá */}
+      <div className="navbar-container">
+        <a 
+          href="#top" 
+          className="navbar-logo"
+          onClick={(e) => handleSmoothScroll(e, '#top')}
+        >
+          <img 
+            src={assetPath('skyshot-logo/skyshot-logo.png')} 
+            alt="SkyShot Lab Logo" 
+          />
+        </a>
+        <ul className="navbar-menu">
+          <li>
+            <a 
+              href="#services" 
+              onClick={(e) => handleSmoothScroll(e, '#services')}
+            >
+              Services
+            </a>
+          </li>
+          <li>
+            <a 
+              href="#work" 
+              onClick={(e) => handleSmoothScroll(e, '#work')}
+            >
+              Work
+            </a>
+          </li>
+          <li>
+            <a 
+              href="#contact" 
+              onClick={(e) => handleSmoothScroll(e, '#contact')}
+            >
+              Contact
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
 };
