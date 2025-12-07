@@ -52,145 +52,80 @@ function App() {
     const video = videoRef.current
     if (!video) return
 
-    let loaderHidden = false
-    const cleanupFunctions = []
     const startTime = Date.now()
-    const MIN_LOADER_TIME = 1500 // Minimum 1.5 seconds for smooth UX
+    let isLoaded = false
+
+    const tryPlay = () => {
+      if (video.paused) {
+        // Set currentTime to ensure video is ready to play
+        if (video.readyState >= 2) {
+          video.currentTime = 0.01
+        }
+        video.play().catch(() => {
+          // Silently handle autoplay errors - will retry on other events
+        })
+      }
+    }
 
     const hideLoader = () => {
-      if (loaderHidden) return
-      loaderHidden = true
-      
-      // Use requestAnimationFrame to ensure smooth transition
-      requestAnimationFrame(() => {
-        setIsLoading(false)
-        setHeroVisible(true)
-        document.body.classList.add('video-ready')
-      })
+      if (isLoaded) return
+      isLoaded = true
+      setIsLoading(false)
+      setHeroVisible(true)
+      document.body.classList.add('video-ready')
     }
 
-    const checkAndHideLoader = () => {
+    const checkReady = setInterval(() => {
+      if (isLoaded) {
+        clearInterval(checkReady)
+        return
+      }
+      
       const elapsed = Date.now() - startTime
-      const isVideoPlaying = video.readyState >= 3 && 
-                            video.currentTime > 0 && 
-                            !video.paused && 
-                            !video.ended
+      const ready = video.readyState >= 3 && 
+                   video.currentTime > 0 && 
+                   !video.paused && 
+                   !video.ended
 
-      // Hide loader if video is playing AND minimum time has passed
-      if (isVideoPlaying && elapsed >= MIN_LOADER_TIME) {
+      if (ready || elapsed >= 4000) {
         hideLoader()
-        return true
+        clearInterval(checkReady)
       }
-      
-      // Also hide after max wait time (fallback for slow connections)
-      if (elapsed >= 4000) {
-        hideLoader()
-        return true
-      }
-      
-      return false
-    }
+    }, 200)
 
-    // Aggressive play attempts for mobile autoplay
-    const attemptPlay = () => {
-      if (video.paused) {
-        const playPromise = video.play()
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              // Video started playing
-              setTimeout(() => checkAndHideLoader(), 100)
-            })
-            .catch((error) => {
-              // Autoplay blocked - will retry on other events
-              console.debug('Autoplay attempt:', error.message)
-            })
-        }
+    // Fallbacks para garantizar autoplay
+    video.addEventListener('loadedmetadata', tryPlay)
+    video.addEventListener('loadeddata', tryPlay)
+    video.addEventListener('canplay', tryPlay)
+    video.addEventListener('canplaythrough', tryPlay)
+    video.addEventListener('playing', tryPlay)
+
+    // Fix oculto para iOS: activar audio context suspendido
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    if (AudioContext) {
+      const ctx = new AudioContext()
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {
+          // Silently handle audio context errors
+        })
       }
     }
-
-    // Event handlers for comprehensive video state detection
-    const handleLoadedData = () => {
-      // Video has loaded enough data to start playing
-      attemptPlay()
-      checkAndHideLoader()
-    }
-
-    const handleCanPlay = () => {
-      // Video can start playing (may need buffering)
-      attemptPlay()
-      checkAndHideLoader()
-    }
-
-    const handleCanPlayThrough = () => {
-      // Video can play through without stopping
-      attemptPlay()
-      checkAndHideLoader()
-    }
-
-    const handlePlaying = () => {
-      // Video has actually started playing
-      setTimeout(() => checkAndHideLoader(), 50)
-    }
-
-    const handleTimeUpdate = () => {
-      // Video time updated - means it's playing
-      if (video.currentTime > 0) {
-        checkAndHideLoader()
-      }
-    }
-
-    const handleLoadedMetadata = () => {
-      // Video metadata loaded - try to play early
-      attemptPlay()
-    }
-
-    // Set up comprehensive event listeners
-    video.addEventListener('loadedmetadata', handleLoadedMetadata)
-    video.addEventListener('loadeddata', handleLoadedData)
-    video.addEventListener('canplay', handleCanPlay)
-    video.addEventListener('canplaythrough', handleCanPlayThrough)
-    video.addEventListener('playing', handlePlaying)
-    video.addEventListener('timeupdate', handleTimeUpdate)
-
-    cleanupFunctions.push(
-      () => video.removeEventListener('loadedmetadata', handleLoadedMetadata),
-      () => video.removeEventListener('loadeddata', handleLoadedData),
-      () => video.removeEventListener('canplay', handleCanPlay),
-      () => video.removeEventListener('canplaythrough', handleCanPlayThrough),
-      () => video.removeEventListener('playing', handlePlaying),
-      () => video.removeEventListener('timeupdate', handleTimeUpdate)
-    )
 
     // Force video load immediately
     video.load()
 
-    // Initial play attempt for fast connections
+    // Initial play attempt
     if (video.readyState >= 2) {
-      attemptPlay()
+      tryPlay()
     }
 
-    // Periodic check for slow connections (3G/4G throttling)
-    const checkInterval = setInterval(() => {
-      if (checkAndHideLoader()) {
-        clearInterval(checkInterval)
-      }
-    }, 200)
-
-    cleanupFunctions.push(() => clearInterval(checkInterval))
-
-    // Fallback timeout - hide loader after max wait
-    const fallbackTimeout = setTimeout(() => {
-      if (!loaderHidden) {
-        hideLoader()
-      }
-    }, 4000)
-
-    cleanupFunctions.push(() => clearTimeout(fallbackTimeout))
-
-    // Cleanup function
     return () => {
-      cleanupFunctions.forEach(cleanup => cleanup())
+      clearInterval(checkReady)
+      video.removeEventListener('loadedmetadata', tryPlay)
+      video.removeEventListener('loadeddata', tryPlay)
+      video.removeEventListener('canplay', tryPlay)
+      video.removeEventListener('canplaythrough', tryPlay)
+      video.removeEventListener('playing', tryPlay)
       document.body.classList.remove('video-ready')
     }
   }, [])
@@ -281,6 +216,7 @@ function App() {
               playsInline
               loop
               preload="auto"
+              crossOrigin="anonymous"
               className="hero__video"
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
