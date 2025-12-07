@@ -295,6 +295,8 @@ body.video-ready .hero__video {
   align-items: center;
   justify-content: center;
   color: var(--brand);
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes float {
@@ -474,6 +476,13 @@ body.video-ready .hero__video {
   
   .cards {
     grid-template-columns: 1fr;
+  }
+  
+  .card__icon--lottie {
+    max-width: 100%;
+    width: auto !important;
+    height: auto !important;
+    max-height: 120px;
   }
   
 }
