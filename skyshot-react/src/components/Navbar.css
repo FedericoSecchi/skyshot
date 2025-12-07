@@ -4,8 +4,8 @@
   top: 0;
   width: 100%;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0); /* fully transparent by default - will be updated dynamically */
-  transition: background-color 0.3s ease-out; /* Smooth transition for dynamic changes */
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease-out;
   padding: 12px 24px;
 }
 
@@ -24,11 +24,9 @@
 }
 
 .navbar-logo img {
-  height: 80px;
+  height: 100px;
   width: auto;
   display: block;
-  opacity: 1;
-  visibility: visible;
   max-width: 100%;
 }
 
@@ -50,4 +48,23 @@
 
 .navbar-menu li a:hover {
   color: #00ffcc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .custom-navbar {
+    padding: 8px 16px;
+  }
+
+  .navbar-logo img {
+    height: 60px;
+  }
+
+  .navbar-menu {
+    gap: 16px;
+  }
+
+  .navbar-menu li a {
+    font-size: 14px;
+  }
 }

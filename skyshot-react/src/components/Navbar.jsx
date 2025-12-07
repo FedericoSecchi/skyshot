@@ -1,12 +1,5 @@
-import React from 'react';
-import './Navbar.css';
-
-const BASE_URL = import.meta.env.BASE_URL
-
-const assetPath = (path) => {
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  return `${BASE_URL}${cleanPath}`
-}
+import './Navbar.css'
+import { assetPath } from '../utils/assetPath'
 
 const Navbar = ({ navbarRef }) => {
   const handleSmoothScroll = (e, targetId) => {
@@ -28,33 +21,40 @@ const Navbar = ({ navbarRef }) => {
           href="#top" 
           className="navbar-logo"
           onClick={(e) => handleSmoothScroll(e, '#top')}
+          aria-label="Go to top"
         >
           <img 
             src={assetPath('assets/skyshot.png')} 
             alt="SkyShot Lab Logo" 
+            width="100"
+            height="100"
+            loading="eager"
           />
         </a>
-        <ul className="navbar-menu">
-          <li>
+        <ul className="navbar-menu" role="menubar">
+          <li role="none">
             <a 
               href="#services" 
               onClick={(e) => handleSmoothScroll(e, '#services')}
+              role="menuitem"
             >
               Services
             </a>
           </li>
-          <li>
+          <li role="none">
             <a 
               href="#work" 
               onClick={(e) => handleSmoothScroll(e, '#work')}
+              role="menuitem"
             >
               Work
             </a>
           </li>
-          <li>
+          <li role="none">
             <a 
               href="#contact" 
               onClick={(e) => handleSmoothScroll(e, '#contact')}
+              role="menuitem"
             >
               Contact
             </a>

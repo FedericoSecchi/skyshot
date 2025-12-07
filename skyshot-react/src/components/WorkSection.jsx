@@ -1,12 +1,6 @@
-import { useEffect, useRef, useCallback, useMemo } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import DomeGallery from './DomeGallery'
-
-const BASE_URL = import.meta.env.BASE_URL
-
-const assetPath = (path) => {
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  return `${BASE_URL}${cleanPath}`
-}
+import { assetPath } from '../utils/assetPath'
 
 const galleryImages = [
   { src: assetPath('fotos/1wingfoil-lake-garda.jpg'), alt: 'Wingfoil jump over Lake Garda' },

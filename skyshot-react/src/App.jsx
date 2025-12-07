@@ -1,35 +1,14 @@
-// Restaurar la estructura completa de la web
-// 1. Mantener el DomeGallery y el ImageModal con sus últimos ajustes
-// 2. Asegurar que estén presentes las siguientes secciones en App.jsx:
-//    - Hero
-//    - About
-//    - SelectedWork
-//    - Contact
-//    - Footer
-// 3. Asegurarse de que DomeGallery esté dentro de SelectedWork como antes
-// 4. Verificar que todos los componentes estén bien importados y ordenados
-// 5. No eliminar el nuevo ImageModal, solo asegurar que todo lo anterior conviva correctamente
-// 6. Confirmar que el render final de App.jsx refleje la estructura original + el nuevo modal
-
-import { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react'
+import { useState, useEffect, useRef, Suspense, lazy } from 'react'
 import ImageModal from './components/ImageModal'
 import Loader from './components/Loader'
 import Navbar from './components/Navbar'
+import { assetPath } from './utils/assetPath'
 import './index.css'
 
 // Lazy load sections for better performance
 const ServicesSection = lazy(() => import('./components/ServicesSection'))
 const WorkSection = lazy(() => import('./components/WorkSection'))
 const ContactSection = lazy(() => import('./components/ContactSection'))
-
-// Get base URL for assets (works in both dev and production)
-const BASE_URL = import.meta.env.BASE_URL
-
-// Helper function to get asset path
-const assetPath = (path) => {
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path
-  return `${BASE_URL}${cleanPath}`
-}
 
 function App() {
   const [heroVisible, setHeroVisible] = useState(false)
@@ -169,9 +148,9 @@ function App() {
     }
   }
 
-  const handleImageClick = useCallback((imageSrc) => {
+  const handleImageClick = (imageSrc) => {
     setModalImage(imageSrc)
-  }, [])
+  }
 
   return (
     <>
@@ -180,14 +159,14 @@ function App() {
       <main id="top">
         {/* HERO */}
         <section className="hero">
-          <div className={`hero__content ${heroVisible ? 'visible' : ''}`}>
+          <div className="hero__content">
             <h1>Outdoor visuals, <span>from above</span>.</h1>
             <p>From shore, boat or sky. You focus on riding—we do the rest.</p>
             <div className="hero__cta">
-              <a className="btn" href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')}>
+              <a className="btn" href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')} aria-label="Book a session">
                 Book a session
               </a>
-              <a className="link" href="#work" onClick={(e) => handleSmoothScroll(e, '#work')}>
+              <a className="link" href="#work" onClick={(e) => handleSmoothScroll(e, '#work')} aria-label="View selected work">
                 See work ↗
               </a>
             </div>
