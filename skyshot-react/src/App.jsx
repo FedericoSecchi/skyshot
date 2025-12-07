@@ -187,6 +187,14 @@ function App() {
               playsInline 
               preload="auto"
               className="hero__video"
+              onCanPlayThrough={() => {
+                // Ensure video plays immediately when ready
+                if (videoRef.current) {
+                  videoRef.current.play().catch(() => {
+                    // Ignore play() errors (autoplay restrictions)
+                  })
+                }
+              }}
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
               Your browser does not support the video tag.
