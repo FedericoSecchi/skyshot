@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'lottie-react'
-import cameraAnimation from '../../assets/lottie/camera-aperture.json'
+import cameraAnimation from '../../assets/lottie/camera-aperture-v2.json'
 
 export default function ServiceIconCamera() {
   return (

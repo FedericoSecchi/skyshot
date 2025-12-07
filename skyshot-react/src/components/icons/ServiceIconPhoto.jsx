@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'lottie-react'
-import photoAnimation from '../../assets/lottie/picture.json'
+import photoAnimation from '../../assets/lottie/picture-v2.json'
 
 export default function ServiceIconPhoto() {
   return (

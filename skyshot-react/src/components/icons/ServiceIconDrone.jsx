@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'lottie-react'
-import droneAnimation from '../../assets/lottie/uav-technology.json'
+import droneAnimation from '../../assets/lottie/uav-technology-v2.json'
 
 export default function ServiceIconDrone() {
   return (
