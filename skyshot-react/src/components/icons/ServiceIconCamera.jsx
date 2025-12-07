@@ -1,0 +1,17 @@
+import React from 'react'
+import Lottie from 'lottie-react'
+import cameraAnimation from '../../assets/lottie/camera-animation.json'
+
+export default function ServiceIconCamera() {
+  return (
+    <div className="card__icon card__icon--lottie" style={{ width: 120, height: 120 }} aria-hidden="true">
+      <Lottie
+        animationData={cameraAnimation}
+        loop={true}
+        autoplay={true}
+        style={{ width: '100%', height: '100%' }}
+      />
+    </div>
+  )
+}
+
