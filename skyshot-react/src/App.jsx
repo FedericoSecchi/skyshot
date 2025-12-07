@@ -58,10 +58,11 @@ function App() {
 
     const checkVideoPlaying = () => {
       // Verify video is actually playing and showing frames
-      const isReady = video.readyState === 4 && // HAVE_ENOUGH_DATA
-                     video.currentTime > 0 &&   // Video has started playing
-                     !video.paused &&           // Video is not paused
-                     !video.ended               // Video is not ended
+      // Only mark as ready if ALL conditions are met:
+      const isReady = video.readyState >= 3 &&    // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA
+                     video.currentTime > 0 &&     // Video has started playing
+                     !video.paused &&             // Video is not paused
+                     !video.ended                 // Video is not ended
 
       if (isReady && !isVideoReady) {
         isVideoReady = true
@@ -69,7 +70,7 @@ function App() {
         // Use requestAnimationFrame to ensure frame is rendered
         rafId = requestAnimationFrame(() => {
           // Double check that video is still playing
-          if (video.currentTime > 0 && !video.paused) {
+          if (video.currentTime > 0 && !video.paused && video.readyState >= 3) {
             setIsLoading(false)
             setHeroVisible(true)
             document.body.classList.add('video-ready')
@@ -79,6 +80,7 @@ function App() {
             if (fallbackTimeout) clearTimeout(fallbackTimeout)
           } else {
             // If not playing yet, try again
+            isVideoReady = false
             rafId = requestAnimationFrame(checkVideoPlaying)
           }
         })
@@ -122,16 +124,42 @@ function App() {
     video.addEventListener('playing', handlePlaying, { once: true })
     video.addEventListener('timeupdate', handleTimeUpdate, { once: true })
 
-    // Start checking immediately for fast connections
-    if (video.readyState >= 4) {
-      video.play().then(() => {
-        rafId = requestAnimationFrame(checkVideoPlaying)
-      }).catch(() => {
-        checkVideoPlaying()
+    // Force play attempt for mobile autoplay
+    const attemptPlay = () => {
+      video.play().catch((error) => {
+        // Autoplay might be blocked, but continue checking
+        console.log('Autoplay attempt:', error.message)
       })
-    } else {
-      // Start checking loop
+    }
+
+    // Start checking immediately for fast connections
+    if (video.readyState >= 3) {
+      attemptPlay()
+      // Fallback: try again after a short delay for slow connections
+      setTimeout(() => {
+        if (video.readyState >= 3 && video.paused) {
+          attemptPlay()
+        }
+      }, 500)
       rafId = requestAnimationFrame(checkVideoPlaying)
+    } else {
+      // For slower connections, wait for readyState >= 3 then attempt play
+      const waitForReady = () => {
+        if (video.readyState >= 3) {
+          attemptPlay()
+          // Fallback: try again after delay
+          setTimeout(() => {
+            if (video.readyState >= 3 && video.paused) {
+              attemptPlay()
+            }
+          }, 750)
+          rafId = requestAnimationFrame(checkVideoPlaying)
+        } else {
+          // Keep waiting
+          setTimeout(waitForReady, 100)
+        }
+      }
+      waitForReady()
     }
 
     // Safety fallback - hide loader after max wait time even if video hasn't started
@@ -234,11 +262,11 @@ function App() {
           <div className="hero__media">
             <video 
               ref={videoRef}
-              autoPlay 
-              muted 
-              loop 
-              playsInline 
+              muted
+              autoPlay
+              playsInline
               preload="auto"
+              loop
               className="hero__video"
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
