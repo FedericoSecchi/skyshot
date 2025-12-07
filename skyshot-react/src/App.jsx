@@ -290,8 +290,8 @@ function App() {
               muted
               autoPlay
               playsInline
-              preload="auto"
               loop
+              preload="auto"
               className="hero__video"
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
