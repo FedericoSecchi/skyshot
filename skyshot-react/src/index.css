@@ -265,6 +265,83 @@ body.video-ready .hero__video {
 .card__icon {
   margin-bottom: 16px;
   color: var(--brand);
+  /* Optimización para animaciones */
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Animaciones para íconos */
+.card__icon--float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.card__icon--pulse {
+  animation: iconPulse 2.5s ease-in-out infinite;
+}
+
+.card__icon--bounce {
+  animation: iconBounce 2.8s ease-in-out infinite;
+}
+
+.card__icon--spin {
+  animation: iconSpin 4s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+  }
+  50% {
+    transform: translateY(-8px) translateZ(0);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1) translateZ(0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes iconBounce {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+  }
+  25% {
+    transform: translateY(-6px) translateZ(0);
+  }
+  50% {
+    transform: translateY(0) translateZ(0);
+  }
+  75% {
+    transform: translateY(-3px) translateZ(0);
+  }
+}
+
+@keyframes iconSpin {
+  from {
+    transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+/* Desactivar animaciones para prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .card__icon--float,
+  .card__icon--pulse,
+  .card__icon--bounce,
+  .card__icon--spin {
+    animation: none;
+  }
 }
 
 .card h3 {
