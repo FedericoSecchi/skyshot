@@ -9,7 +9,7 @@ export default function ServiceIconCamera() {
         animationData={cameraAnimation}
         loop={true}
         autoplay={true}
-        style={{ width: '180px', height: '180px' }}
+        style={{ width: '200px', height: '200px' }}
       />
     </div>
   )
