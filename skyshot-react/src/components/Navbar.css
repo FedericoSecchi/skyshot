@@ -5,29 +5,39 @@
   width: 100%;
   padding: 15px 30px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   z-index: 10000;
-  backdrop-filter: blur(4px);
-  background-color: rgba(0, 0, 0, 0.15); /* más transparente */
-  transform: translateY(-100%);
-  transition: transform 0.3s ease, background-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0); /* fondo invisible inicialmente */
+  transition: background-color 0.6s ease;
 }
 
+/* Fondo oscuro y semi-transparente al hacer scroll */
 body.navbar-scrolled .custom-navbar {
-  transform: translateY(0);
-  background-color: rgba(0, 0, 0, 0.5); /* más visible al hacer scroll */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Logo visible siempre */
 .navbar-logo {
   width: 120px;
   height: auto;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  opacity: 1;
+  transition: transform 0.6s ease;
 }
 
+/* Opcional: animación de entrada solo la primera vez */
 body.navbar-scrolled .navbar-logo {
-  opacity: 1;
   transform: translateY(0);
+}
+
+/* Botones u otros elementos si se agregan */
+.custom-navbar button,
+.custom-navbar a {
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }

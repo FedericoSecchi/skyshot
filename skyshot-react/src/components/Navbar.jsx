@@ -16,6 +16,7 @@ const Navbar = () => {
         alt="SkyShot Lab Logo" 
         className="navbar-logo" 
       />
+      {/* Si querés agregar botones, se pueden poner acá */}
     </nav>
   );
 };
