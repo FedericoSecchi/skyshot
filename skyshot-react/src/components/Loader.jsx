@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import './Loader.css'
 
 const BASE_URL = import.meta.env.BASE_URL
@@ -9,14 +8,7 @@ const assetPath = (path) => {
 }
 
 function Loader() {
-  useEffect(() => {
-    // Preload video while loader is showing
-    const video = document.createElement('video')
-    video.src = assetPath('video/sequence-01.mp4')
-    video.preload = 'auto'
-    video.load()
-  }, [])
-
+  // Video preload is handled in HTML and App.jsx, no need to duplicate here
   return (
     <div className="loader__overlay">
       <div className="loader__spinner">

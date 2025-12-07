@@ -47,161 +47,150 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Hero video loading - optimized to hide loader only when video shows first frame
-  // OR after minimum 3 seconds (whichever comes first)
+  // Hero video loading - optimized for universal autoplay and smooth loader transition
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    let isVideoReady = false
     let loaderHidden = false
-    let rafId = null
-    let fallbackTimeout = null
+    const cleanupFunctions = []
     const startTime = Date.now()
-    const MIN_LOADER_TIME = 2000 // Minimum 2 seconds
+    const MIN_LOADER_TIME = 1500 // Minimum 1.5 seconds for smooth UX
 
     const hideLoader = () => {
-      // Only hide loader once to avoid flickering
-      if (!loaderHidden) {
-        loaderHidden = true
+      if (loaderHidden) return
+      loaderHidden = true
+      
+      // Use requestAnimationFrame to ensure smooth transition
+      requestAnimationFrame(() => {
         setIsLoading(false)
         setHeroVisible(true)
         document.body.classList.add('video-ready')
-        
-        // Clean up all timers
-        if (rafId) cancelAnimationFrame(rafId)
-        if (fallbackTimeout) clearTimeout(fallbackTimeout)
-      }
-    }
-
-    const checkVideoPlaying = () => {
-      // Verify video is actually playing and showing frames
-      // Only mark as ready if ALL conditions are met:
-      const isReady = video.readyState >= 3 &&    // HAVE_FUTURE_DATA or HAVE_ENOUGH_DATA
-                     video.currentTime > 0 &&     // Video has started playing
-                     !video.paused &&             // Video is not paused
-                     !video.ended                 // Video is not ended
-
-      if (isReady && !isVideoReady) {
-        isVideoReady = true
-        
-        // Use requestAnimationFrame to ensure frame is rendered
-        rafId = requestAnimationFrame(() => {
-          // Double check that video is still playing
-          if (video.currentTime > 0 && !video.paused && video.readyState >= 3) {
-            // Check if minimum time has passed OR video is ready
-            const elapsed = Date.now() - startTime
-            if (elapsed >= MIN_LOADER_TIME) {
-              hideLoader()
-            } else {
-              // Wait for minimum time, then hide
-              setTimeout(() => {
-                if (!loaderHidden) {
-                  hideLoader()
-                }
-              }, MIN_LOADER_TIME - elapsed)
-            }
-          } else {
-            // If not playing yet, try again
-            isVideoReady = false
-            rafId = requestAnimationFrame(checkVideoPlaying)
-          }
-        })
-      } else if (!isVideoReady) {
-        // Keep checking until video is ready
-        rafId = requestAnimationFrame(checkVideoPlaying)
-      }
-    }
-
-    const handleCanPlayThrough = () => {
-      // Video has enough data to play through
-      // Try to play and then check if it's actually playing
-      video.play().then(() => {
-        // Wait a frame to ensure video has started
-        rafId = requestAnimationFrame(() => {
-          checkVideoPlaying()
-        })
-      }).catch(() => {
-        // Autoplay might be blocked, but still check if video loaded
-        checkVideoPlaying()
       })
     }
 
+    const checkAndHideLoader = () => {
+      const elapsed = Date.now() - startTime
+      const isVideoPlaying = video.readyState >= 3 && 
+                            video.currentTime > 0 && 
+                            !video.paused && 
+                            !video.ended
+
+      // Hide loader if video is playing AND minimum time has passed
+      if (isVideoPlaying && elapsed >= MIN_LOADER_TIME) {
+        hideLoader()
+        return true
+      }
+      
+      // Also hide after max wait time (fallback for slow connections)
+      if (elapsed >= 4000) {
+        hideLoader()
+        return true
+      }
+      
+      return false
+    }
+
+    // Aggressive play attempts for mobile autoplay
+    const attemptPlay = () => {
+      if (video.paused) {
+        const playPromise = video.play()
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Video started playing
+              setTimeout(() => checkAndHideLoader(), 100)
+            })
+            .catch((error) => {
+              // Autoplay blocked - will retry on other events
+              console.debug('Autoplay attempt:', error.message)
+            })
+        }
+      }
+    }
+
+    // Event handlers for comprehensive video state detection
+    const handleLoadedData = () => {
+      // Video has loaded enough data to start playing
+      attemptPlay()
+      checkAndHideLoader()
+    }
+
+    const handleCanPlay = () => {
+      // Video can start playing (may need buffering)
+      attemptPlay()
+      checkAndHideLoader()
+    }
+
+    const handleCanPlayThrough = () => {
+      // Video can play through without stopping
+      attemptPlay()
+      checkAndHideLoader()
+    }
+
     const handlePlaying = () => {
-      // Video has started playing
-      checkVideoPlaying()
+      // Video has actually started playing
+      setTimeout(() => checkAndHideLoader(), 50)
     }
 
     const handleTimeUpdate = () => {
-      // Video time has updated, means it's playing
+      // Video time updated - means it's playing
       if (video.currentTime > 0) {
-        checkVideoPlaying()
+        checkAndHideLoader()
       }
     }
+
+    const handleLoadedMetadata = () => {
+      // Video metadata loaded - try to play early
+      attemptPlay()
+    }
+
+    // Set up comprehensive event listeners
+    video.addEventListener('loadedmetadata', handleLoadedMetadata)
+    video.addEventListener('loadeddata', handleLoadedData)
+    video.addEventListener('canplay', handleCanPlay)
+    video.addEventListener('canplaythrough', handleCanPlayThrough)
+    video.addEventListener('playing', handlePlaying)
+    video.addEventListener('timeupdate', handleTimeUpdate)
+
+    cleanupFunctions.push(
+      () => video.removeEventListener('loadedmetadata', handleLoadedMetadata),
+      () => video.removeEventListener('loadeddata', handleLoadedData),
+      () => video.removeEventListener('canplay', handleCanPlay),
+      () => video.removeEventListener('canplaythrough', handleCanPlayThrough),
+      () => video.removeEventListener('playing', handlePlaying),
+      () => video.removeEventListener('timeupdate', handleTimeUpdate)
+    )
 
     // Force video load immediately
     video.load()
 
-    // Set up event listeners
-    video.addEventListener('canplaythrough', handleCanPlayThrough, { once: true })
-    video.addEventListener('playing', handlePlaying, { once: true })
-    video.addEventListener('timeupdate', handleTimeUpdate, { once: true })
-
-    // Force play attempt for mobile autoplay
-    const attemptPlay = () => {
-      video.play().catch((error) => {
-        // Autoplay might be blocked, but continue checking
-        console.log('Autoplay attempt:', error.message)
-      })
-    }
-
-    // Start checking immediately for fast connections
-    if (video.readyState >= 3) {
+    // Initial play attempt for fast connections
+    if (video.readyState >= 2) {
       attemptPlay()
-      // Fallback: try again after a short delay for slow connections
-      setTimeout(() => {
-        if (video.readyState >= 3 && video.paused) {
-          attemptPlay()
-        }
-      }, 500)
-      rafId = requestAnimationFrame(checkVideoPlaying)
-    } else {
-      // For slower connections, wait for readyState >= 3 then attempt play
-      const waitForReady = () => {
-        if (video.readyState >= 3) {
-          attemptPlay()
-          // Fallback: try again after delay
-          setTimeout(() => {
-            if (video.readyState >= 3 && video.paused) {
-              attemptPlay()
-            }
-          }, 750)
-          rafId = requestAnimationFrame(checkVideoPlaying)
-        } else {
-          // Keep waiting
-          setTimeout(waitForReady, 100)
-        }
-      }
-      waitForReady()
     }
 
-    // Safety fallback - hide loader after minimum time (3s) if video isn't ready yet
-    // This ensures loader is visible for at least 3 seconds OR until video is ready
-    // The loader will hide when EITHER condition is met:
-    // 1. Video is ready (readyState >= 3, currentTime > 0, !paused) AND minimum time has passed
-    // 2. Minimum 3 seconds have elapsed (regardless of video state)
-    fallbackTimeout = setTimeout(() => {
+    // Periodic check for slow connections (3G/4G throttling)
+    const checkInterval = setInterval(() => {
+      if (checkAndHideLoader()) {
+        clearInterval(checkInterval)
+      }
+    }, 200)
+
+    cleanupFunctions.push(() => clearInterval(checkInterval))
+
+    // Fallback timeout - hide loader after max wait
+    const fallbackTimeout = setTimeout(() => {
       if (!loaderHidden) {
         hideLoader()
       }
-    }, MIN_LOADER_TIME)
+    }, 4000)
 
+    cleanupFunctions.push(() => clearTimeout(fallbackTimeout))
+
+    // Cleanup function
     return () => {
-      video.removeEventListener('canplaythrough', handleCanPlayThrough)
-      video.removeEventListener('playing', handlePlaying)
-      video.removeEventListener('timeupdate', handleTimeUpdate)
-      if (rafId) cancelAnimationFrame(rafId)
-      if (fallbackTimeout) clearTimeout(fallbackTimeout)
+      cleanupFunctions.forEach(cleanup => cleanup())
       document.body.classList.remove('video-ready')
     }
   }, [])
