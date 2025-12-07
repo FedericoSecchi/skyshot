@@ -1,7 +1,3 @@
-// 🔥 Auditoría recomendada: revisá que las imágenes usen lazy loading (`loading='lazy'`), 
-// que el mapa de objetos no cause renders innecesarios, y que el componente esté memoizado 
-// si no hay props cambiando.
-
 import { useEffect, useMemo, useRef, useCallback } from 'react';
 
 import { useGesture } from '@use-gesture/react';

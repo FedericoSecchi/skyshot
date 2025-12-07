@@ -34,9 +34,6 @@ body.video-ready .section {
   transform: translateY(20px);
 }
 
-body.video-ready .loader-overlay {
-  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
-}
 
 /* Fade-in animations for sections */
 .fade-in {
@@ -213,6 +210,14 @@ body.video-playing .custom-navbar {
   backface-visibility: hidden;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .hero__video {
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
 .hero__media picture,
 .hero__media img {
   display: block;
@@ -372,9 +377,20 @@ body.video-playing .custom-navbar {
 
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  .loader__overlay {
+    opacity: 0 !important;
+    filter: none !important;
+    display: none !important;
+  }
+
+  video {
+    opacity: 1 !important;
+    transition: none !important;
   }
   
   .card:hover,

@@ -11,7 +11,6 @@ const WorkSection = lazy(() => import('./components/WorkSection'))
 const ContactSection = lazy(() => import('./components/ContactSection'))
 
 function App() {
-  const [heroVisible, setHeroVisible] = useState(false)
   const [modalImage, setModalImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef(null)
@@ -66,7 +65,6 @@ function App() {
         video.style.transition = 'none'
       }
       setIsLoading(false)
-      setHeroVisible(true)
       document.body.classList.add('video-ready')
       return
     }
