@@ -48,13 +48,31 @@ function App() {
   }, [])
 
   // Hero video loading - optimized to hide loader only when video shows first frame
+  // OR after minimum 3 seconds (whichever comes first)
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
     let isVideoReady = false
+    let loaderHidden = false
     let rafId = null
     let fallbackTimeout = null
+    const startTime = Date.now()
+    const MIN_LOADER_TIME = 3000 // Minimum 3 seconds
+
+    const hideLoader = () => {
+      // Only hide loader once to avoid flickering
+      if (!loaderHidden) {
+        loaderHidden = true
+        setIsLoading(false)
+        setHeroVisible(true)
+        document.body.classList.add('video-ready')
+        
+        // Clean up all timers
+        if (rafId) cancelAnimationFrame(rafId)
+        if (fallbackTimeout) clearTimeout(fallbackTimeout)
+      }
+    }
 
     const checkVideoPlaying = () => {
       // Verify video is actually playing and showing frames
@@ -71,13 +89,18 @@ function App() {
         rafId = requestAnimationFrame(() => {
           // Double check that video is still playing
           if (video.currentTime > 0 && !video.paused && video.readyState >= 3) {
-            setIsLoading(false)
-            setHeroVisible(true)
-            document.body.classList.add('video-ready')
-            
-            // Clean up
-            if (rafId) cancelAnimationFrame(rafId)
-            if (fallbackTimeout) clearTimeout(fallbackTimeout)
+            // Check if minimum time has passed OR video is ready
+            const elapsed = Date.now() - startTime
+            if (elapsed >= MIN_LOADER_TIME) {
+              hideLoader()
+            } else {
+              // Wait for minimum time, then hide
+              setTimeout(() => {
+                if (!loaderHidden) {
+                  hideLoader()
+                }
+              }, MIN_LOADER_TIME - elapsed)
+            }
           } else {
             // If not playing yet, try again
             isVideoReady = false
@@ -162,14 +185,16 @@ function App() {
       waitForReady()
     }
 
-    // Safety fallback - hide loader after max wait time even if video hasn't started
+    // Safety fallback - hide loader after minimum time (3s) if video isn't ready yet
+    // This ensures loader is visible for at least 3 seconds OR until video is ready
+    // The loader will hide when EITHER condition is met:
+    // 1. Video is ready (readyState >= 3, currentTime > 0, !paused) AND minimum time has passed
+    // 2. Minimum 3 seconds have elapsed (regardless of video state)
     fallbackTimeout = setTimeout(() => {
-      if (!isVideoReady) {
-        setIsLoading(false)
-        setHeroVisible(true)
-        document.body.classList.add('video-ready')
+      if (!loaderHidden) {
+        hideLoader()
       }
-    }, 3000)
+    }, MIN_LOADER_TIME)
 
     return () => {
       video.removeEventListener('canplaythrough', handleCanPlayThrough)
