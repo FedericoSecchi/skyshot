@@ -1,22 +1,35 @@
 # Lottie Animations
 
-## Drone Animation
+## Iconos de Servicios
 
-Actualmente hay un **placeholder básico** (`uav-technology-animation.json`) que permite que el build funcione.
+Todos los íconos de la sección de servicios usan animaciones Lottie. Actualmente hay **placeholders básicos** que permiten que el build funcione.
 
-### Para usar una animación real de Lottie:
+### Archivos de animación:
 
-1. Descarga una animación de drone desde [LottieFiles](https://lottiefiles.com):
-   - **Recomendada:** [UAV Technology Animation](https://lottiefiles.com/free-animation/uav-technology-gNnNTrONQ0)
-   - O busca por "drone", "uav", "quadcopter"
+- `uav-technology-animation.json` - Para el ícono de Drone (ya tiene animación real)
+- `camera-animation.json` - Para el ícono de Camera Ops (placeholder)
+- `photo-animation.json` - Para el ícono de Photo Packs (placeholder)
+- `brush-animation.json` - Para el ícono de Branding & Motion (placeholder)
 
-2. Descarga el archivo JSON
+### Para usar animaciones reales de Lottie:
 
-3. Reemplaza el archivo `uav-technology-animation.json` en esta carpeta
+1. Descarga animaciones desde [LottieFiles](https://lottiefiles.com):
+   - **Drone:** [UAV Technology Animation](https://lottiefiles.com/free-animation/uav-technology-gNnNTrONQ0) ✅ (ya implementada)
+   - **Camera:** Busca por "camera", "aperture", "photography"
+   - **Photo:** Busca por "photo", "picture", "gallery"
+   - **Brush:** Busca por "brush", "paint", "design", "branding"
 
-El componente `ServiceIconDrone.jsx` ya está configurado para usar este archivo automáticamente.
+2. Descarga los archivos JSON
+
+3. Reemplaza los archivos correspondientes en esta carpeta
+
+Los componentes ya están configurados para usar estos archivos automáticamente:
+- `ServiceIconDrone.jsx`
+- `ServiceIconCamera.jsx`
+- `ServiceIconPhoto.jsx`
+- `ServiceIconBrush.jsx`
 
 ### Nota
 
-El placeholder actual es una animación mínima funcional. Reemplázalo con una animación real de LottieFiles para obtener mejores resultados visuales.
+Los placeholders actuales son animaciones mínimas funcionales. Reemplázalos con animaciones reales de LottieFiles para obtener mejores resultados visuales.
 
