@@ -7,6 +7,15 @@
   --card: #151A22;
 }
 
+/* Video ready state - smooth transitions */
+body.video-ready .hero__content {
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+body.video-ready .loader-overlay {
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
 /* Fade-in animations for sections */
 .fade-in {
   opacity: 0;

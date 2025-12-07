@@ -47,58 +47,111 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Hero video loading - optimized with loader
+  // Hero video loading - optimized to hide loader only when video shows first frame
   useEffect(() => {
     const video = videoRef.current
-    if (video) {
-      // Force video load immediately
-      video.load()
-      
-      // Wait for canplaythrough to ensure video is fully ready
-      const handleCanPlayThrough = () => {
-        setIsLoading(false)
-        setHeroVisible(true)
-      }
-      
-      const handleCanPlay = () => {
-        // Show content when video can play (faster response)
-        setHeroVisible(true)
-      }
-      
-      const handleLoadedData = () => {
-        // Fallback: show content after data is loaded
-        if (!heroVisible) {
-          setTimeout(() => setHeroVisible(true), 300)
-        }
-      }
-      
-      // Primary: wait for canplaythrough to hide loader
-      video.addEventListener('canplaythrough', handleCanPlayThrough, { once: true })
-      video.addEventListener('canplay', handleCanPlay, { once: true })
-      video.addEventListener('loadeddata', handleLoadedData, { once: true })
-      
-      // Immediate fallback for very fast connections
-      if (video.readyState >= 4) {
-        setIsLoading(false)
-        setHeroVisible(true)
-      } else if (video.readyState >= 3) {
-        setHeroVisible(true)
-      }
-      
-      // Safety fallback - hide loader after max wait time
-      const fallback = setTimeout(() => {
-        setIsLoading(false)
-        if (!heroVisible) setHeroVisible(true)
-      }, 2000)
+    if (!video) return
 
-      return () => {
-        video.removeEventListener('canplaythrough', handleCanPlayThrough)
-        video.removeEventListener('canplay', handleCanPlay)
-        video.removeEventListener('loadeddata', handleLoadedData)
-        clearTimeout(fallback)
+    let isVideoReady = false
+    let rafId = null
+    let fallbackTimeout = null
+
+    const checkVideoPlaying = () => {
+      // Verify video is actually playing and showing frames
+      const isReady = video.readyState === 4 && // HAVE_ENOUGH_DATA
+                     video.currentTime > 0 &&   // Video has started playing
+                     !video.paused &&           // Video is not paused
+                     !video.ended               // Video is not ended
+
+      if (isReady && !isVideoReady) {
+        isVideoReady = true
+        
+        // Use requestAnimationFrame to ensure frame is rendered
+        rafId = requestAnimationFrame(() => {
+          // Double check that video is still playing
+          if (video.currentTime > 0 && !video.paused) {
+            setIsLoading(false)
+            setHeroVisible(true)
+            document.body.classList.add('video-ready')
+            
+            // Clean up
+            if (rafId) cancelAnimationFrame(rafId)
+            if (fallbackTimeout) clearTimeout(fallbackTimeout)
+          } else {
+            // If not playing yet, try again
+            rafId = requestAnimationFrame(checkVideoPlaying)
+          }
+        })
+      } else if (!isVideoReady) {
+        // Keep checking until video is ready
+        rafId = requestAnimationFrame(checkVideoPlaying)
       }
     }
-  }, [heroVisible])
+
+    const handleCanPlayThrough = () => {
+      // Video has enough data to play through
+      // Try to play and then check if it's actually playing
+      video.play().then(() => {
+        // Wait a frame to ensure video has started
+        rafId = requestAnimationFrame(() => {
+          checkVideoPlaying()
+        })
+      }).catch(() => {
+        // Autoplay might be blocked, but still check if video loaded
+        checkVideoPlaying()
+      })
+    }
+
+    const handlePlaying = () => {
+      // Video has started playing
+      checkVideoPlaying()
+    }
+
+    const handleTimeUpdate = () => {
+      // Video time has updated, means it's playing
+      if (video.currentTime > 0) {
+        checkVideoPlaying()
+      }
+    }
+
+    // Force video load immediately
+    video.load()
+
+    // Set up event listeners
+    video.addEventListener('canplaythrough', handleCanPlayThrough, { once: true })
+    video.addEventListener('playing', handlePlaying, { once: true })
+    video.addEventListener('timeupdate', handleTimeUpdate, { once: true })
+
+    // Start checking immediately for fast connections
+    if (video.readyState >= 4) {
+      video.play().then(() => {
+        rafId = requestAnimationFrame(checkVideoPlaying)
+      }).catch(() => {
+        checkVideoPlaying()
+      })
+    } else {
+      // Start checking loop
+      rafId = requestAnimationFrame(checkVideoPlaying)
+    }
+
+    // Safety fallback - hide loader after max wait time even if video hasn't started
+    fallbackTimeout = setTimeout(() => {
+      if (!isVideoReady) {
+        setIsLoading(false)
+        setHeroVisible(true)
+        document.body.classList.add('video-ready')
+      }
+    }, 3000)
+
+    return () => {
+      video.removeEventListener('canplaythrough', handleCanPlayThrough)
+      video.removeEventListener('playing', handlePlaying)
+      video.removeEventListener('timeupdate', handleTimeUpdate)
+      if (rafId) cancelAnimationFrame(rafId)
+      if (fallbackTimeout) clearTimeout(fallbackTimeout)
+      document.body.classList.remove('video-ready')
+    }
+  }, [])
 
   const handleSmoothScroll = (e, targetId) => {
     e.preventDefault()
@@ -187,14 +240,6 @@ function App() {
               playsInline 
               preload="auto"
               className="hero__video"
-              onCanPlayThrough={() => {
-                // Ensure video plays immediately when ready
-                if (videoRef.current) {
-                  videoRef.current.play().catch(() => {
-                    // Ignore play() errors (autoplay restrictions)
-                  })
-                }
-              }}
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
               Your browser does not support the video tag.
