@@ -15,6 +15,7 @@ import { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react'
 import ImageModal from './components/ImageModal'
 import Loader from './components/Loader'
 import './index.css'
+import './components/Navbar.css'
 
 // Lazy load sections for better performance
 const ServicesSection = lazy(() => import('./components/ServicesSection'))
@@ -41,7 +42,13 @@ function App() {
   // Navbar scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setNavbarScrolled(window.scrollY > 50)
+      if (window.scrollY > 50) {
+        document.body.classList.add('navbar-scrolled')
+        setNavbarScrolled(true)
+      } else {
+        document.body.classList.remove('navbar-scrolled')
+        setNavbarScrolled(false)
+      }
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
@@ -61,7 +68,9 @@ function App() {
         if (video.readyState >= 2) {
           video.currentTime = 0.01
         }
-        video.play().catch(() => {
+        video.play().then(() => {
+          document.body.classList.add('video-playing')
+        }).catch(() => {
           // Silently handle autoplay errors - will retry on other events
         })
       }
@@ -99,6 +108,11 @@ function App() {
     video.addEventListener('canplay', tryPlay)
     video.addEventListener('canplaythrough', tryPlay)
     video.addEventListener('playing', tryPlay)
+    
+    // Remove video-playing class when video ends
+    video.addEventListener('ended', () => {
+      document.body.classList.remove('video-playing')
+    })
 
     // Fix oculto para iOS: activar audio context suspendido
     const AudioContext = window.AudioContext || window.webkitAudioContext

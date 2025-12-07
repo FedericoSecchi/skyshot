@@ -114,9 +114,21 @@ html {
   transition: all 0.3s ease;
 }
 
+/* Navbar transparent during video playback */
+body.video-playing .custom-navbar {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
 .custom-navbar.scrolled {
   background: rgba(14, 17, 23, 0.98) !important;
   backdrop-filter: blur(20px);
+}
+
+/* Ensure navbar has background when scrolled, even during video playback */
+body.video-playing.navbar-scrolled .custom-navbar {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
 }
 
 .nav-logo {
