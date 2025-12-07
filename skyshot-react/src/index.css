@@ -208,15 +208,14 @@ body.video-playing .custom-navbar {
   will-change: auto;
   transform: translateZ(0);
   backface-visibility: hidden;
-  /* Estado inicial: video limpio sin blur */
-  filter: none;
-  opacity: 1;
+  /* Estado inicial: video con blur que se desvanece */
+  filter: blur(15px);
+  transition: filter 1.5s ease;
 }
 
-/* Video ready state: asegurar video limpio */
+/* Video ready state: blur desaparece suavemente */
 body.video-ready .hero__video {
-  filter: none !important;
-  opacity: 1 !important;
+  filter: blur(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
