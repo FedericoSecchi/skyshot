@@ -36,18 +36,34 @@ function App() {
   const [modalImage, setModalImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef(null)
+  const navbarRef = useRef(null)
 
-  // Navbar scroll effect - show navbar background when scrolling
+  // Navbar dynamic transparency based on scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        document.body.classList.add('navbar-scrolled')
-      } else {
-        document.body.classList.remove('navbar-scrolled')
-      }
+      const navbar = navbarRef.current
+      if (!navbar) return
+
+      const scrollY = window.scrollY
+      // Calculate opacity: 0 at scroll 0px, 0.6 at scroll 300px
+      // Clamp between 0 and 0.6
+      const maxScroll = 300
+      const maxOpacity = 0.6
+      const opacity = Math.min((scrollY / maxScroll) * maxOpacity, maxOpacity)
+      
+      // Apply dynamic background color directly to navbar
+      navbar.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`
     }
 
-    window.addEventListener('scroll', handleScroll)
+    // Set initial transparent background
+    if (navbarRef.current) {
+      navbarRef.current.style.backgroundColor = 'rgba(0, 0, 0, 0)'
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    // Trigger once to set initial state
+    handleScroll()
+    
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -159,7 +175,7 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar navbarRef={navbarRef} />
 
       <main id="top">
         {/* HERO */}

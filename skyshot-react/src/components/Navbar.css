@@ -4,13 +4,9 @@
   top: 0;
   width: 100%;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0); /* fully transparent by default */
-  transition: background-color 1.8s ease-in-out;
+  background-color: rgba(0, 0, 0, 0); /* fully transparent by default - will be updated dynamically */
+  transition: background-color 0.3s ease-out; /* Smooth transition for dynamic changes */
   padding: 12px 24px;
-}
-
-body.navbar-scrolled .custom-navbar {
-  background-color: rgba(0, 0, 0, 0.1); /* very transparent on scroll */
 }
 
 .navbar-container {

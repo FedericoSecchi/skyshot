@@ -8,7 +8,7 @@ const assetPath = (path) => {
   return `${BASE_URL}${cleanPath}`
 }
 
-const Navbar = () => {
+const Navbar = ({ navbarRef }) => {
   const handleSmoothScroll = (e, targetId) => {
     e.preventDefault()
     const element = document.querySelector(targetId)
@@ -22,7 +22,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="custom-navbar">
+    <nav ref={navbarRef} className="custom-navbar">
       <div className="navbar-container">
         <a 
           href="#top" 
