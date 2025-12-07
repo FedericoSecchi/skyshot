@@ -11,7 +11,7 @@
 // 5. No eliminar el nuevo ImageModal, solo asegurar que todo lo anterior conviva correctamente
 // 6. Confirmar que el render final de App.jsx refleje la estructura original + el nuevo modal
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import DomeGallery from './components/DomeGallery'
 import ImageModal from './components/ImageModal'
 import './index.css'
@@ -102,21 +102,41 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Hero fade-in effect
+  // Hero fade-in effect - optimized for faster video playback
   useEffect(() => {
     const video = videoRef.current
     if (video) {
-      const handleLoadedData = () => {
-        setTimeout(() => setHeroVisible(true), 800)
-      }
-      video.addEventListener('loadeddata', handleLoadedData)
+      // Prioritize video loading
+      video.load()
       
-      // Fallback
+      const handleCanPlay = () => {
+        // Show content immediately when video can play
+        setHeroVisible(true)
+      }
+      
+      const handleLoadedData = () => {
+        // Fallback: show content after data is loaded
+        if (!heroVisible) {
+          setTimeout(() => setHeroVisible(true), 300)
+        }
+      }
+      
+      // Use canplay for faster response
+      video.addEventListener('canplay', handleCanPlay, { once: true })
+      video.addEventListener('loadeddata', handleLoadedData, { once: true })
+      
+      // Immediate fallback for very fast connections
+      if (video.readyState >= 3) {
+        setHeroVisible(true)
+      }
+      
+      // Safety fallback
       const fallback = setTimeout(() => {
         if (!heroVisible) setHeroVisible(true)
-      }, 2500)
+      }, 1500)
 
       return () => {
+        video.removeEventListener('canplay', handleCanPlay)
         video.removeEventListener('loadeddata', handleLoadedData)
         clearTimeout(fallback)
       }
@@ -141,7 +161,8 @@ function App() {
     setModalImage(imageSrc)
   }, [])
 
-  const gallerySettings = {
+  // Memoize gallery settings to prevent unnecessary re-renders
+  const gallerySettings = useMemo(() => ({
     fit: 2.0,
     minRadius: 140,
     maxRadius: 1000,
@@ -151,7 +172,7 @@ function App() {
     grayscale: false,
     overlayBlurColor: "rgba(14, 17, 23, 0.9)",
     padFactor: 0.08
-  }
+  }), [])
 
   return (
     <>
@@ -220,6 +241,7 @@ function App() {
               muted 
               loop 
               playsInline 
+              preload="auto"
               className="hero__video"
             >
               <source src={assetPath('video/sequence-01.mp4')} type="video/mp4" />
