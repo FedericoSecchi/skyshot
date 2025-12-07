@@ -4,7 +4,7 @@ import droneAnimation from '../../assets/lottie/uav-technology.json'
 
 export default function ServiceIconDrone() {
   return (
-    <div className="card__icon card__icon--lottie" style={{ width: 120, height: 120 }} aria-hidden="true">
+    <div className="card__icon card__icon--lottie" style={{ width: 140, height: 140 }} aria-hidden="true">
       <Lottie
         animationData={droneAnimation}
         loop={true}
