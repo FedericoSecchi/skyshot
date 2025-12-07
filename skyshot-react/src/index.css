@@ -254,6 +254,9 @@ body.video-ready .hero__video {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  min-height: 320px;
+  box-sizing: border-box;
 }
 
 .card:hover {
@@ -263,7 +266,7 @@ body.video-ready .hero__video {
 }
 
 .card__icon {
-  margin-bottom: 16px;
+  margin: 0 0 24px 0;
   color: var(--brand);
   /* Optimización para animaciones */
   will-change: transform;
@@ -271,6 +274,10 @@ body.video-ready .hero__video {
   -webkit-transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Animaciones para íconos */
@@ -297,6 +304,8 @@ body.video-ready .hero__video {
   color: var(--brand);
   max-width: 100%;
   box-sizing: border-box;
+  margin: 0 0 24px 0;
+  flex-shrink: 0;
 }
 
 @keyframes float {
@@ -368,12 +377,18 @@ body.video-ready .hero__video {
   font-size: 20px;
   margin: 0 0 12px;
   font-weight: 700;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .card p {
   color: var(--muted);
   margin: 0;
   line-height: 1.5;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 
