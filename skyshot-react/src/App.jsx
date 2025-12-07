@@ -51,8 +51,29 @@ function App() {
 
   // Hero video loading - optimized for universal autoplay and smooth loader transition
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const loader = document.querySelector('.loader__overlay')
     const video = videoRef.current
+
     if (!video) return
+
+    if (prefersReducedMotion) {
+      console.warn('⚠️ Reduced Motion active: fallback visual applied')
+      if (loader) loader.style.display = 'none'
+      if (video) {
+        video.style.opacity = '1'
+        video.style.filter = 'none'
+        video.style.transition = 'none'
+      }
+      setIsLoading(false)
+      setHeroVisible(true)
+      document.body.classList.add('video-ready')
+      return
+    }
+
+    // Estilos iniciales: solo blur
+    video.style.filter = 'blur(20px)'
+    video.style.transition = 'filter 2s ease'
 
     const tryPlay = () => {
       if (video.paused) {
@@ -71,35 +92,51 @@ function App() {
     const hideLoader = () => {
       if (loaderHidden.current) return
       loaderHidden.current = true
+
       const loader = document.querySelector('.loader__overlay')
       if (loader) {
-        loader.style.transition = 'opacity 3s ease, filter 3s ease'
+        loader.style.transition = 'opacity 1s ease, filter 1s ease'
         loader.style.opacity = '0'
-        loader.style.filter = 'blur(20px)'
+        loader.style.filter = 'blur(15px)'
         setTimeout(() => {
           loader.style.display = 'none'
           setIsLoading(false)
           setHeroVisible(true)
           document.body.classList.add('video-ready')
-        }, 3000) // Duración extendida
+          setTimeout(() => {
+            video.style.filter = 'blur(0)'
+          }, 100)
+        }, 1000)
       } else {
         setIsLoading(false)
         setHeroVisible(true)
         document.body.classList.add('video-ready')
+        setTimeout(() => {
+          video.style.filter = 'blur(0)'
+        }, 100)
       }
     }
+
+    // ⛔️ Fallback visual si video tarda mucho (por conexión lenta o bug)
+    const MAX_WAIT_TIME = 6000
+
+    const timeoutFallback = setTimeout(() => {
+      console.warn('⏱️ Tiempo máximo de espera alcanzado. Forzando transición')
+      hideLoader()
+    }, MAX_WAIT_TIME)
 
     const checkVideoReady = () => {
       const now = Date.now()
       const elapsed = now - startTime.current
 
       const isReady =
-        video.readyState >= 3 &&
-        video.currentTime > 0 &&
-        !video.paused &&
-        !video.ended
+        video?.readyState >= 3 &&
+        video?.currentTime > 0 &&
+        !video?.paused &&
+        !video?.ended
 
       if (isReady && elapsed >= MIN_LOADER_TIME) {
+        clearTimeout(timeoutFallback)
         hideLoader()
       } else {
         requestAnimationFrame(checkVideoReady)
@@ -141,6 +178,7 @@ function App() {
     }
 
     return () => {
+      clearTimeout(timeoutFallback)
       video.removeEventListener('loadedmetadata', tryPlay)
       video.removeEventListener('loadeddata', tryPlay)
       video.removeEventListener('canplay', tryPlay)
