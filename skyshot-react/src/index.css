@@ -213,15 +213,18 @@ html {
   max-width: 1200px;
   padding: 72px 20px;
   text-align: center;
+  /* Initial state - will be overridden by body.video-ready */
   opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 4s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: opacity, transform;
+  transform: translateY(20px);
+  filter: blur(5px);
+  will-change: opacity, transform, filter;
 }
 
+/* Legacy visible class - kept for compatibility but video-ready takes precedence */
 .hero__content.visible {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
 }
 
 .hero__content h1 {
