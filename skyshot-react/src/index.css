@@ -480,12 +480,12 @@ body.video-ready .hero__video {
   
   .card__icon--lottie {
     max-width: 100%;
-    max-height: 130px;
+    max-height: 140px;
   }
   
   .card__icon--lottie > div {
     max-width: 100%;
-    max-height: 130px;
+    max-height: 140px;
   }
   
 }
