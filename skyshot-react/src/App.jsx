@@ -14,8 +14,8 @@
 import { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react'
 import ImageModal from './components/ImageModal'
 import Loader from './components/Loader'
+import Navbar from './components/Navbar'
 import './index.css'
-import './components/Navbar.css'
 
 // Lazy load sections for better performance
 const ServicesSection = lazy(() => import('./components/ServicesSection'))
@@ -32,26 +32,23 @@ const assetPath = (path) => {
 }
 
 function App() {
-  const [navbarScrolled, setNavbarScrolled] = useState(false)
   const [heroVisible, setHeroVisible] = useState(false)
   const [modalImage, setModalImage] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef(null)
-  const navbarRef = useRef(null)
 
-  // Navbar scroll effect
+  // Navbar scroll effect - show navbar when scrolling
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
+    const scrollHandler = () => {
+      if (window.scrollY > 10) {
         document.body.classList.add('navbar-scrolled')
-        setNavbarScrolled(true)
       } else {
         document.body.classList.remove('navbar-scrolled')
-        setNavbarScrolled(false)
       }
     }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+
+    window.addEventListener('scroll', scrollHandler)
+    return () => window.removeEventListener('scroll', scrollHandler)
   }, [])
 
   // Hero video loading - optimized for universal autoplay and smooth loader transition
@@ -148,9 +145,7 @@ function App() {
     e.preventDefault()
     const element = document.querySelector(targetId)
     if (element) {
-      const navbar = navbarRef.current
-      const headerHeight = navbar ? navbar.offsetHeight : 0
-      const targetPosition = element.offsetTop - headerHeight - 20
+      const targetPosition = element.offsetTop - 20
       window.scrollTo({
         top: targetPosition,
         behavior: 'smooth'
@@ -164,48 +159,7 @@ function App() {
 
   return (
     <>
-      <header 
-        ref={navbarRef}
-        className={`navbar navbar-expand-lg fixed-top custom-navbar ${navbarScrolled ? 'scrolled' : ''}`}
-      >
-        <div className="container">
-          <a className="navbar-brand" href="#top" onClick={(e) => handleSmoothScroll(e, '#top')}>
-            <img src={assetPath('skyshot-logo/skyshot-logo.png')} alt="SkyShot Lab logo" className="nav-logo" />
-          </a>
-          
-          <button 
-            className="navbar-toggler" 
-            type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" 
-            aria-expanded="false" 
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link" href="#services" onClick={(e) => handleSmoothScroll(e, '#services')}>
-                  Services
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#work" onClick={(e) => handleSmoothScroll(e, '#work')}>
-                  Work
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link cta-btn" href="#contact" onClick={(e) => handleSmoothScroll(e, '#contact')}>
-                  Book
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <main id="top">
         {/* HERO */}

@@ -1,19 +1,33 @@
-/* Navbar.css */
-.navbar {
+.custom-navbar {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
-  z-index: 10000;
-  transition: background-color 0.3s ease;
   padding: 15px 30px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.15); /* más transparente */
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-body.video-playing .navbar {
-  background-color: transparent;
+body.navbar-scrolled .custom-navbar {
+  transform: translateY(0);
+  background-color: rgba(0, 0, 0, 0.5); /* más visible al hacer scroll */
 }
 
-body.navbar-scrolled .navbar {
-  background-color: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(5px);
+.navbar-logo {
+  width: 120px;
+  height: auto;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
+body.navbar-scrolled .navbar-logo {
+  opacity: 1;
+  transform: translateY(0);
+}
