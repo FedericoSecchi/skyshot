@@ -69,9 +69,9 @@ function App() {
       return
     }
 
-    // Estilos iniciales: solo blur
-    video.style.filter = 'blur(20px)'
-    video.style.transition = 'filter 2s ease'
+    // Estilos iniciales: video limpio sin blur
+    video.style.filter = 'none'
+    video.style.opacity = '1'
 
     const tryPlay = () => {
       if (video.paused) {
@@ -99,19 +99,17 @@ function App() {
         setTimeout(() => {
           loader.style.display = 'none'
           setIsLoading(false)
-          setHeroVisible(true)
           document.body.classList.add('video-ready')
-          setTimeout(() => {
-            video.style.filter = 'blur(0)'
-          }, 100)
+          // Asegurar video limpio sin blur
+          video.style.filter = 'none'
+          video.style.opacity = '1'
         }, 1000)
       } else {
         setIsLoading(false)
-        setHeroVisible(true)
         document.body.classList.add('video-ready')
-        setTimeout(() => {
-          video.style.filter = 'blur(0)'
-        }, 100)
+        // Asegurar video limpio sin blur
+        video.style.filter = 'none'
+        video.style.opacity = '1'
       }
     }
 
