@@ -255,8 +255,11 @@ body.video-ready .hero__video {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 320px;
+  min-height: 400px;
   box-sizing: border-box;
+  position: relative;
+  /* Alineación perfecta de todos los elementos */
+  gap: 0;
 }
 
 .card:hover {
@@ -266,7 +269,8 @@ body.video-ready .hero__video {
 }
 
 .card__icon {
-  margin: 0 0 24px 0;
+  margin: 0;
+  padding: 0;
   color: var(--brand);
   /* Optimización para animaciones */
   will-change: transform;
@@ -278,6 +282,10 @@ body.video-ready .hero__video {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Altura fija para alineación visual perfecta - todos los íconos ocupan el mismo espacio */
+  height: 200px;
+  width: 100%;
+  margin-bottom: 24px;
 }
 
 /* Animaciones para íconos */
@@ -304,8 +312,65 @@ body.video-ready .hero__video {
   color: var(--brand);
   max-width: 100%;
   box-sizing: border-box;
-  margin: 0 0 24px 0;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
+  height: 200px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+/* Compensaciones visuales específicas para cada ícono */
+.card__icon--drone {
+  /* Drone: 160px - centrar en contenedor de 200px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--drone > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--camera {
+  /* Camera: 180px - centrar en contenedor de 200px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--camera > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--photo {
+  /* Photo: 120px - centrar visualmente en contenedor de 200px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--photo > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--brush {
+  /* Brush: 120px - centrar visualmente en contenedor de 200px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__icon--brush > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes float {
@@ -376,19 +441,28 @@ body.video-ready .hero__video {
 .card h3 {
   font-size: 20px;
   margin: 0 0 12px;
+  padding: 0;
   font-weight: 700;
   flex-shrink: 0;
   width: 100%;
+  line-height: 1.2;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card p {
   color: var(--muted);
   margin: 0;
+  padding: 0;
   line-height: 1.5;
   flex: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  text-align: center;
+  min-height: 48px;
 }
 
 
@@ -487,7 +561,7 @@ body.video-ready .hero__video {
   
   .card {
     padding: 24px 16px;
-    min-height: 280px;
+    min-height: 320px;
   }
   
   .cards {
@@ -496,12 +570,14 @@ body.video-ready .hero__video {
   
   .card__icon {
     margin-bottom: 20px;
+    height: 140px;
   }
   
   .card__icon--lottie {
     max-width: 100%;
     max-height: 140px;
     margin-bottom: 20px;
+    height: 140px;
   }
   
   .card__icon--lottie > div {
