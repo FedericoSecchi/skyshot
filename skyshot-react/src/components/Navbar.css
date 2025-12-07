@@ -21,9 +21,19 @@ body.navbar-scrolled .custom-navbar {
   margin: 0 auto;
 }
 
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .navbar-logo img {
-  height: 150px;
+  height: 60px;
   width: auto;
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  max-width: 100%;
 }
 
 .navbar-menu {
