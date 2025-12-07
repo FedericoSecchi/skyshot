@@ -16,6 +16,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef(null)
   const navbarRef = useRef(null)
+  const startTime = useRef(Date.now())
+  const loaderHidden = useRef(false)
+  const MIN_LOADER_TIME = 2500
 
   // Navbar dynamic transparency based on scroll
   useEffect(() => {
@@ -51,9 +54,6 @@ function App() {
     const video = videoRef.current
     if (!video) return
 
-    const startTime = Date.now()
-    let isLoaded = false
-
     const tryPlay = () => {
       if (video.paused) {
         // Set currentTime to ensure video is ready to play
@@ -69,30 +69,45 @@ function App() {
     }
 
     const hideLoader = () => {
-      if (isLoaded) return
-      isLoaded = true
-      setIsLoading(false)
-      setHeroVisible(true)
-      document.body.classList.add('video-ready')
+      if (loaderHidden.current) return
+      loaderHidden.current = true
+      const loader = document.querySelector('.loader__overlay')
+      if (loader) {
+        loader.style.transition = 'opacity 3s ease, filter 3s ease'
+        loader.style.opacity = '0'
+        loader.style.filter = 'blur(20px)'
+        setTimeout(() => {
+          loader.style.display = 'none'
+          setIsLoading(false)
+          setHeroVisible(true)
+          document.body.classList.add('video-ready')
+        }, 3000) // Duración extendida
+      } else {
+        setIsLoading(false)
+        setHeroVisible(true)
+        document.body.classList.add('video-ready')
+      }
     }
 
-    const checkReady = setInterval(() => {
-      if (isLoaded) {
-        clearInterval(checkReady)
-        return
-      }
-      
-      const elapsed = Date.now() - startTime
-      const ready = video.readyState >= 3 && 
-                   video.currentTime > 0 && 
-                   !video.paused && 
-                   !video.ended
+    const checkVideoReady = () => {
+      const now = Date.now()
+      const elapsed = now - startTime.current
 
-      if (ready || elapsed >= 4000) {
+      const isReady =
+        video.readyState >= 3 &&
+        video.currentTime > 0 &&
+        !video.paused &&
+        !video.ended
+
+      if (isReady && elapsed >= MIN_LOADER_TIME) {
         hideLoader()
-        clearInterval(checkReady)
+      } else {
+        requestAnimationFrame(checkVideoReady)
       }
-    }, 200)
+    }
+
+    // Start checking video readiness
+    checkVideoReady()
 
     // Fallbacks para garantizar autoplay
     video.addEventListener('loadedmetadata', tryPlay)
@@ -126,7 +141,6 @@ function App() {
     }
 
     return () => {
-      clearInterval(checkReady)
       video.removeEventListener('loadedmetadata', tryPlay)
       video.removeEventListener('loadeddata', tryPlay)
       video.removeEventListener('canplay', tryPlay)
