@@ -69,9 +69,7 @@ function App() {
       return
     }
 
-    // Estilos iniciales: video limpio sin blur
-    video.style.filter = 'none'
-    video.style.opacity = '1'
+    // El blur inicial y la transición se manejan en CSS
 
     const tryPlay = () => {
       if (video.paused) {
