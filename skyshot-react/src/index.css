@@ -7,13 +7,35 @@
   --card: #151A22;
 }
 
-/* Video ready state - smooth transitions */
+/* Video ready state - smooth transitions and entrance animations */
 body.video-ready .hero__content {
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition: opacity 1s ease-out, transform 1s ease-out, filter 1s ease-out;
+  transition-delay: 0.3s;
+}
+
+.hero__content {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(5px);
+}
+
+body.video-ready .section {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  transition-delay: 0.5s;
+}
+
+.section {
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 body.video-ready .loader-overlay {
-  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
 }
 
 /* Fade-in animations for sections */
