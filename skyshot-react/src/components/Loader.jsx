@@ -18,14 +18,14 @@ function Loader() {
   }, [])
 
   return (
-    <div className="loader-overlay">
-      <div className="loader-content">
+    <div className="loader__overlay">
+      <div className="loader__spinner">
         <img 
           src={assetPath('skyshot-logo/skyshot-logo.png')} 
           alt="SkyShot Lab" 
-          className="loader-logo"
+          className="loader__logo"
         />
-        <div className="loader-spinner"></div>
+        <div className="spinner"></div>
       </div>
     </div>
   )

@@ -58,7 +58,7 @@ function App() {
     let rafId = null
     let fallbackTimeout = null
     const startTime = Date.now()
-    const MIN_LOADER_TIME = 3000 // Minimum 3 seconds
+    const MIN_LOADER_TIME = 2000 // Minimum 2 seconds
 
     const hideLoader = () => {
       // Only hide loader once to avoid flickering
