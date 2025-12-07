@@ -290,6 +290,13 @@ body.video-ready .hero__video {
   animation: iconSpin 4s linear infinite;
 }
 
+.card__icon--lottie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand);
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0) translateZ(0);
@@ -341,6 +348,16 @@ body.video-ready .hero__video {
   .card__icon--bounce,
   .card__icon--spin {
     animation: none;
+  }
+  
+  .card__icon--lottie {
+    display: none;
+  }
+  
+  .card__icon--lottie::after {
+    content: '✈️';
+    display: block;
+    font-size: 40px;
   }
 }
 
