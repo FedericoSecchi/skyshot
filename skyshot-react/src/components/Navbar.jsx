@@ -30,7 +30,7 @@ const Navbar = () => {
           onClick={(e) => handleSmoothScroll(e, '#top')}
         >
           <img 
-            src={assetPath('skyshot-logo/skyshot-logo.png')} 
+            src={assetPath('assets/logo.svg')} 
             alt="SkyShot Lab Logo" 
           />
         </a>
