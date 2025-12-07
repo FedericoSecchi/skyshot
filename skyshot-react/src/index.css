@@ -357,7 +357,8 @@ body.video-ready .hero__video {
   .card__icon--lottie::after {
     content: '✈️';
     display: block;
-    font-size: 40px;
+    font-size: 48px;
+    color: var(--brand);
   }
 }
 
