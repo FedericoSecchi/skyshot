@@ -1,6 +1,6 @@
 import React from 'react'
 import Lottie from 'lottie-react'
-import brushAnimation from '../../assets/lottie/brush-animation.json'
+import brushAnimation from '../../assets/lottie/paint-brush.json'
 
 export default function ServiceIconBrush() {
   return (
