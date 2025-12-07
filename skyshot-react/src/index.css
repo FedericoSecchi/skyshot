@@ -145,7 +145,7 @@ body.video-playing .custom-navbar {
 
 .hero__content p {
   color: var(--muted);
-  font-size: 18px;
+  font-size: 22px;
   max-width: 46ch;
   margin: 0 0 32px;
 }
@@ -554,6 +554,10 @@ body.video-ready .hero__video {
 @media (max-width: 640px) {
   .hero__content h1 {
     font-size: 32px;
+  }
+  
+  .hero__content p {
+    font-size: 18px;
   }
   
   .section__title {
