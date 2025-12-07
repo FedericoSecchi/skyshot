@@ -335,10 +335,11 @@ body.video-ready .hero__video {
 }
 
 .card__icon--camera {
-  /* Camera: 180px - centrar en contenedor de 200px */
+  /* Camera: 220px - más grande para equilibrio visual, centrado en contenedor de 200px */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .card__icon--camera > div {
